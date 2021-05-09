@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnectionToken, getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 
-describe('UserService', () => {
-  let service: UserService;
+describe('UsersService', () => {
+  let service: UsersService;
   const mockRepository = {
     async find(): Promise<User[]> {
       return [
@@ -19,7 +19,7 @@ describe('UserService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UserService,
+        UsersService,
         {
           // https://stackoverflow.com/questions/57099863
           provide: getRepositoryToken(User),
@@ -32,7 +32,7 @@ describe('UserService', () => {
       ],
     }).compile();
 
-    service = module.get<UserService>(UserService);
+    service = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
@@ -41,11 +41,11 @@ describe('UserService', () => {
 
   it('should return for findAll', async () => {
     // mock file for reuse
-    const testUser: User = {
+    const testUsers: User = {
       id: 12,
       email: 'hello',
     };
-    jest.spyOn(mockRepository, 'find').mockResolvedValueOnce([testUser]);
-    expect(await service.findAll()).toEqual([testUser]);
+    jest.spyOn(mockRepository, 'find').mockResolvedValueOnce([testUsers]);
+    expect(await service.findAll()).toEqual([testUsers]);
   });
 });

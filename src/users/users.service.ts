@@ -4,26 +4,26 @@ import { Connection, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private userssRepository: Repository<User>,
     private connection: Connection,
   ) {}
 
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.userssRepository.find();
   }
 
   async findOne(id: number): Promise<User> {
-    return this.usersRepository.findOne(id);
+    return this.userssRepository.findOne(id);
   }
 
-  // async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-  //   return `This action updates a #${id} user`;
+  // async update(id: number, updateUsersDto: UpdateUsersDto): Promise<Users> {
+  //   return `This action updates a #${id} users`;
   // }
 
   async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+    await this.userssRepository.delete(id);
   }
 }

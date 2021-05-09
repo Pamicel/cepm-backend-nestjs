@@ -2,17 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getConnectionToken, getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
-describe('UserController', () => {
-  let controller: UserController;
+describe('UsersController', () => {
+  let controller: UsersController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
+      controllers: [UsersController],
       providers: [
-        UserService,
+        UsersService,
         {
           // https://stackoverflow.com/questions/57099863
           provide: getRepositoryToken(User),
@@ -25,7 +25,7 @@ describe('UserController', () => {
       ],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    controller = module.get<UsersController>(UsersController);
   });
 
   it('should be defined', () => {
