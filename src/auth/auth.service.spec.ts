@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnectionToken, getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { UsersService } from './users.service';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
 
-describe('UsersService', () => {
-  let service: UsersService;
-  const mockRepository = {
+describe('AuthService', () => {
+  let service: AuthService;
+  const mockUserRepository = {
     async find(): Promise<User[]> {
       return [];
     },
@@ -14,11 +15,12 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        AuthService,
         UsersService,
         {
           // https://stackoverflow.com/questions/57099863
           provide: getRepositoryToken(User),
-          useValue: mockRepository,
+          useValue: mockUserRepository,
         },
         {
           provide: getConnectionToken(),
@@ -27,21 +29,10 @@ describe('UsersService', () => {
       ],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  it('should return for findAll', async () => {
-    // mock file for reuse
-    const testUsers: User = {
-      id: 12,
-      email: 'hello',
-      password: '',
-    };
-    jest.spyOn(mockRepository, 'find').mockResolvedValueOnce([testUsers]);
-    expect(await service.findAll()).toEqual([testUsers]);
   });
 });
