@@ -17,6 +17,10 @@ export class UsersService {
     email: string;
     password: string;
   }): Promise<User> {
+    const existingUser = await this.usersRepository.findOne({ email });
+    if (existingUser) {
+      throw new HttpException('Email already used', HttpStatus.CONFLICT);
+    }
     const newUser = this.usersRepository.create({ email, password });
     return this.usersRepository.save(newUser);
   }
