@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUsersDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -11,8 +10,14 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUsersDto: CreateUsersDto): Promise<User> {
-    const newUser = this.usersRepository.create(createUsersDto);
+  async create({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<User> {
+    const newUser = this.usersRepository.create({ email, password });
     return this.usersRepository.save(newUser);
   }
 
@@ -21,18 +26,35 @@ export class UsersService {
   }
 
   async findOne(id: number): Promise<User> {
-    return this.usersRepository.findOne(id);
+    if (!id) {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return this.usersRepository.findOneOrFail(id);
+    } catch (error) {
+      throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+    }
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return this.usersRepository.findOne({ email });
+    if (!email) {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return this.usersRepository.findOneOrFail({ email });
+    } catch (error) {
+      throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+    }
   }
 
-  // async update(id: number, updateUsersDto: UpdateUsersDto): Promise<Users> {
-  //   return `This action updates a #${id} users`;
-  // }
+  async deleteUser(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    return this.usersRepository.remove(user);
+  }
 
-  async remove(id: number): Promise<void> {
-    await this.usersRepository.delete(id);
+  async updateUser(id: number, { email }: { email: string }): Promise<User> {
+    const user = await this.findOne(id);
+    user.email = email;
+    return this.usersRepository.save(user);
   }
 }

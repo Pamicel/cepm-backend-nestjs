@@ -36,11 +36,11 @@ describe('UsersService', () => {
 
   it('should return for findAll', async () => {
     // mock file for reuse
-    const testUsers: User = {
+    const testUsers: User = new User({
       id: 12,
       email: 'hello',
       password: '',
-    };
+    });
     jest.spyOn(mockRepository, 'find').mockResolvedValueOnce([testUsers]);
     expect(await service.findAll()).toEqual([testUsers]);
   });
