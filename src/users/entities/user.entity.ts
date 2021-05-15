@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { PermissionLevel } from '../../auth/permission-level.enum';
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
 
 @Entity()
@@ -18,6 +19,9 @@ export class User {
   @Exclude()
   @Column()
   password: string;
+
+  @Column('int')
+  permissionLevel: PermissionLevel;
 
   @BeforeInsert()
   emailToLowerCase() {

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnectionToken, getRepositoryToken } from '@nestjs/typeorm';
+import { PermissionLevel } from '../auth/permission-level.enum';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -40,6 +41,7 @@ describe('UsersService', () => {
       id: 12,
       email: 'hello',
       password: '',
+      permissionLevel: PermissionLevel.User,
     });
     jest.spyOn(mockRepository, 'find').mockResolvedValueOnce([testUsers]);
     expect(await service.findAll()).toEqual([testUsers]);
