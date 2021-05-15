@@ -3,38 +3,52 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   Patch,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/create-user.dto';
 import { UpdateUsersDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
+import { PermissionLevel } from '../auth/permission-level.enum';
 
 @ApiTags('users')
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @RequiredPermissionLevel(PermissionLevel.Staff)
   create(@Body() createUsersDto: CreateUsersDto): Promise<User> {
     return this.usersService.create(createUsersDto);
   }
 
   @Get()
+  @RequiredPermissionLevel(PermissionLevel.Director)
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Get(':id')
+  @RequiredPermissionLevel(PermissionLevel.Staff)
   findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(+id);
   }
 
+  @Get('me')
+  findSelf(@Request() req): Promise<User> {
+    return this.usersService.findOne(req.user.id);
+  }
+
   @Patch(':id')
+  @RequiredPermissionLevel(PermissionLevel.Staff)
   update(
     @Param('id') id: string,
     @Body() updateUsersDto: UpdateUsersDto,
@@ -43,6 +57,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @RequiredPermissionLevel(PermissionLevel.Director)
   remove(@Param('id') id: string): Promise<User> {
     return this.usersService.deleteUser(+id);
   }
