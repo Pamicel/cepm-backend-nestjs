@@ -7,6 +7,9 @@ import {
   Delete,
   Patch,
   Request,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+  // SerializeOptions,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/create-user.dto';
@@ -18,6 +21,7 @@ import { PermissionLevel } from '../auth/permission-level.enum';
 
 @ApiTags('users')
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

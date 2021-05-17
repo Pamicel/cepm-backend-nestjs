@@ -23,6 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new HttpException('User no longer exists', HttpStatus.UNAUTHORIZED);
     }
-    return { user };
+    return user;
   }
 }
