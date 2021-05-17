@@ -8,6 +8,8 @@ import config from '../ormconfig';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './auth/permission-level.guard';
+import { CaslModule } from './casl/casl.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -17,10 +19,15 @@ import { PermissionsGuard } from './auth/permission-level.guard';
     TypeOrmModule.forRoot(config),
     UsersModule,
     AuthModule,
+    CaslModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: PermissionsGuard,

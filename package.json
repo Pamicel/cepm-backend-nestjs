@@ -20,10 +20,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:empty": "yarn run typeorm migration:create -- -n",
     "migration:generate": "yarn run build && yarn run typeorm migration:generate -- -n",
     "migration:run": "yarn run build && yarn run typeorm migration:run"
   },
   "dependencies": {
+    "@casl/ability": "^5.3.1",
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.15",

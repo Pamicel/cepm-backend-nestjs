@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Patch,
-  UseGuards,
   Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -14,12 +13,10 @@ import { CreateUsersDto } from './dto/create-user.dto';
 import { UpdateUsersDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
 import { PermissionLevel } from '../auth/permission-level.enum';
 
 @ApiTags('users')
-@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
