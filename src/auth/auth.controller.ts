@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { RequestMagicTokenDto } from './dto/request-magic-token.dto';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { MagicLoginDto, PasswordLoginDto } from './dto/login.dto';
 import { Public } from './public.decorator';
 
 @Controller('auth')
@@ -10,7 +10,16 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  async login(@Body() loginDto: LoginDto): Promise<{ token: string }> {
+  async login(@Body() loginDto: PasswordLoginDto): Promise<{ token: string }> {
+    const token = await this.authService.login(loginDto);
+    return { token };
+  }
+
+  @Public()
+  @Post('magic-login')
+  async magicLogin(
+    @Body() loginDto: MagicLoginDto,
+  ): Promise<{ token: string }> {
     const token = await this.authService.login(loginDto);
     return { token };
   }

@@ -11,16 +11,29 @@ export class AuthService {
     private emailService: EmailService,
   ) {}
 
-  async login({ email, password }) {
-    const user = await this.usersService.findOneByEmail(email);
-    if (user.password !== password) {
+  async login({
+    email,
+    password,
+    magicToken,
+  }: {
+    email: string;
+    password?: string;
+    magicToken?: string;
+  }) {
+    try {
+      const user = await this.usersService.findOneByEmail(email);
+      const incorrectPassword = password && user.password !== password;
+      const incorrectMagicToken = magicToken && user.magicToken !== magicToken;
+      if (incorrectPassword || incorrectMagicToken) {
+        throw new Error();
+      }
+      return this.jwtService.sign({
+        email: email,
+        id: user.id,
+      });
+    } catch (error) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-
-    return this.jwtService.sign({
-      email: email,
-      id: user.id,
-    });
   }
 
   private generate() {
