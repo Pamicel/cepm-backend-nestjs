@@ -10,6 +10,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './auth/permission-level.guard';
 import { CaslModule } from './casl/casl.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { EmailModule } from './email/email.module';
+import { EmailService } from './email/email.service';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     UsersModule,
     AuthModule,
     CaslModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [
@@ -32,6 +35,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       provide: APP_GUARD,
       useClass: PermissionsGuard,
     },
+    EmailService,
   ],
 })
 export class AppModule {}

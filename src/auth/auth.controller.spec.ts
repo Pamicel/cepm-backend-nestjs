@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { EmailService } from '../email/email.service';
+import { HttpService } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -16,6 +18,14 @@ describe('AuthController', () => {
       providers: [
         AuthService,
         UsersService,
+        {
+          provide: EmailService,
+          useValue: {},
+        },
+        {
+          provide: HttpService,
+          useValue: {},
+        },
         {
           provide: JwtService,
           useValue: {},

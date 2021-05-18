@@ -21,11 +21,29 @@ export class User {
   email: string;
 
   @Exclude()
-  @Column()
+  @Column({
+    nullable: true,
+  })
   password: string;
 
   @Exclude()
-  @Column('int')
+  @Column({
+    nullable: true,
+  })
+  magicToken: string;
+
+  @Exclude()
+  @Column({ type: 'date', nullable: true })
+  tokenIssued: string;
+
+  @Column({ type: 'date' })
+  dateCreated: string;
+
+  @Exclude()
+  @Column({
+    type: 'int',
+    default: PermissionLevel.User,
+  })
   permissionLevel: PermissionLevel;
 
   @BeforeInsert()

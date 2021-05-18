@@ -1,6 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EmailService } from '../email/email.service';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
@@ -18,6 +19,10 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         UsersService,
+        {
+          provide: EmailService,
+          useValue: {},
+        },
         {
           provide: JwtService,
           useValue: {},

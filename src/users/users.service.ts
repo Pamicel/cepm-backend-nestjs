@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+// import { AuthService } from '../auth/auth.service';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 
@@ -7,7 +8,7 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private usersRepository: Repository<User>, // private authService: AuthService,
   ) {}
 
   async create({
@@ -15,14 +16,27 @@ export class UsersService {
     password,
   }: {
     email: string;
-    password: string;
+    password?: string;
   }): Promise<User> {
     const existingUser = await this.usersRepository.findOne({ email });
     if (existingUser) {
       throw new HttpException('Email already used', HttpStatus.CONFLICT);
     }
-    const newUser = this.usersRepository.create({ email, password });
+    const dateCreated = new Date().toISOString();
+    const newUser = this.usersRepository.create({
+      email,
+      password,
+      dateCreated,
+    });
     return this.usersRepository.save(newUser);
+  }
+
+  async userExists({ email }: { email: string }): Promise<User | null> {
+    try {
+      return this.findOneByEmail(email);
+    } catch (error) {
+      return null;
+    }
   }
 
   async findAll(): Promise<User[]> {
@@ -56,9 +70,18 @@ export class UsersService {
     return this.usersRepository.remove(user);
   }
 
-  async updateUser(id: number, { email }: { email: string }): Promise<User> {
+  async updateUser(
+    id: number,
+    { email, magicToken }: { email?: string; magicToken?: string },
+  ): Promise<User> {
     const user = await this.findOne(id);
-    user.email = email;
+    if (email) {
+      user.email = email;
+    }
+    if (magicToken) {
+      user.tokenIssued = new Date().toISOString();
+      user.magicToken = magicToken;
+    }
     return this.usersRepository.save(user);
   }
 }
