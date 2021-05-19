@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../email/email.service';
 import { UsersService } from '../users/users.service';
+import * as bcrypt from 'bcrypt';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +32,33 @@ export class AuthService {
     });
   }
 
+  async validatePassword({ user, password }: { user: User; password: string }) {
+    return password && (await bcrypt.compare(password, user.password));
+  }
+
+  async validateMagicToken({
+    user,
+    magicToken,
+  }: {
+    user: User;
+    magicToken: string;
+  }) {
+    if (!user.tokenIssued || !user.magicToken) {
+      return false;
+    }
+
+    // Check that the magic link is 15 min old or less
+    const tokenIssuedTimestamp = new Date(user.tokenIssued).getTime();
+    const fifteenMinutes = 1000 * 60 * 15;
+    const now = new Date().getTime();
+    const expired = tokenIssuedTimestamp + fifteenMinutes < now;
+
+    const isValid =
+      magicToken && (await bcrypt.compare(magicToken, user.magicToken));
+
+    return isValid && !expired;
+  }
+
   async login({
     email,
     password,
@@ -41,11 +70,12 @@ export class AuthService {
   }) {
     try {
       const user = await this.usersService.findOneByEmail(email);
-      const incorrectPassword = password && user.password !== password;
-      const incorrectMagicToken = magicToken && user.magicToken !== magicToken;
-      if (incorrectPassword || incorrectMagicToken) {
+      const validPassword = this.validatePassword({ user, password });
+      const validMagicToken = this.validateMagicToken({ user, magicToken });
+      if (!validMagicToken && !validPassword) {
         throw new Error();
       }
+
       return this.signJWT({
         email,
         id: user.id,
@@ -81,7 +111,12 @@ export class AuthService {
       data: { magicToken },
     });
     // todo hash
-    await this.usersService.updateUser(user.id, { magicToken });
+
+    const saltOrRounds = 10;
+    const hashedMagicToken = await bcrypt.hash(magicToken, saltOrRounds);
+    await this.usersService.updateUser(user.id, {
+      magicToken: hashedMagicToken,
+    });
     return;
   }
 
