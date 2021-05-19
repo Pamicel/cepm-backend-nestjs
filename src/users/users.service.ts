@@ -67,7 +67,10 @@ export class UsersService {
 
   async deleteUser(id: number): Promise<User> {
     const user = await this.findOne(id);
-    return this.usersRepository.remove(user);
+    if (user.permissionLevel < 4) {
+      return this.usersRepository.remove(user);
+    }
+    throw new HttpException('Cannot delete admin user', HttpStatus.BAD_REQUEST);
   }
 
   async updateUser(

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Req, Res } from '@nestjs/common';
 import { RequestMagicTokenDto } from './dto/request-magic-token.dto';
 import { AuthService } from './auth.service';
 import { MagicLoginDto, PasswordLoginDto } from './dto/login.dto';
@@ -39,5 +39,11 @@ export class AuthController {
     await this.authService.createMagicToken(user.email);
 
     return;
+  }
+
+  @Get(['verify', 'renew'])
+  @Header('Cache-Control', 'no-store, max-age=0')
+  async verify(@Req() req): Promise<{ token: string }> {
+    return { token: await this.authService.verify(req.user) };
   }
 }
