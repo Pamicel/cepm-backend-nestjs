@@ -114,7 +114,7 @@ export class AuthService {
 
     const saltOrRounds = 10;
     const hashedMagicToken = await bcrypt.hash(magicToken, saltOrRounds);
-    await this.usersService.updateUser(user.id, {
+    await this.usersService.updateUserMagicToken(user.id, {
       magicToken: hashedMagicToken,
     });
     return;

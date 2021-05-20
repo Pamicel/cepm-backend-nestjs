@@ -65,26 +65,45 @@ export class UsersService {
     }
   }
 
-  async deleteUser(id: number): Promise<User> {
+  async deleteUser(id: number, deleterPermissionLevel: number): Promise<User> {
     const user = await this.findOne(id);
-    if (user.permissionLevel < 4) {
-      return this.usersRepository.remove(user);
+    if (user.permissionLevel === 4) {
+      throw new HttpException(
+        'Cannot delete admin user',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    throw new HttpException('Cannot delete admin user', HttpStatus.BAD_REQUEST);
+    if (user.permissionLevel > deleterPermissionLevel) {
+      throw new HttpException(
+        'Cannot delete user with higher permission level',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return this.usersRepository.remove(user);
   }
 
-  async updateUser(
+  async updateUser(id: number, { email }: { email: string }): Promise<User> {
+    const user = await this.findOne(id);
+    user.email = email;
+    return this.usersRepository.save(user);
+  }
+
+  async updateUserMagicToken(
     id: number,
-    { email, magicToken }: { email?: string; magicToken?: string },
+    { magicToken }: { magicToken: string },
   ): Promise<User> {
     const user = await this.findOne(id);
-    if (email) {
-      user.email = email;
-    }
-    if (magicToken) {
-      user.tokenIssued = new Date().toISOString();
-      user.magicToken = magicToken;
-    }
+    user.tokenIssued = new Date().toISOString();
+    user.magicToken = magicToken;
+    return this.usersRepository.save(user);
+  }
+
+  async updateUserPermission(
+    id: number,
+    { permissionLevel }: { permissionLevel: number },
+  ): Promise<User> {
+    const user = await this.findOne(id);
+    user.permissionLevel = permissionLevel;
     return this.usersRepository.save(user);
   }
 }
