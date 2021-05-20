@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   async validatePassword({ user, password }: { user: User; password: string }) {
-    return password && (await bcrypt.compare(password, user.password));
+    return await bcrypt.compare(password, user.password);
   }
 
   async validateMagicToken({
@@ -53,8 +53,7 @@ export class AuthService {
     const now = new Date().getTime();
     const expired = tokenIssuedTimestamp + fifteenMinutes < now;
 
-    const isValid =
-      magicToken && (await bcrypt.compare(magicToken, user.magicToken));
+    const isValid = await bcrypt.compare(magicToken, user.magicToken);
 
     return isValid && !expired;
   }
@@ -70,9 +69,11 @@ export class AuthService {
   }) {
     try {
       const user = await this.usersService.findOneByEmail(email);
-      const validPassword = this.validatePassword({ user, password });
-      const validMagicToken = this.validateMagicToken({ user, magicToken });
-      if (!validMagicToken && !validPassword) {
+      if (
+        (!password && !magicToken) ||
+        (password && !(await this.validatePassword({ user, password }))) ||
+        (magicToken && !(await this.validateMagicToken({ user, magicToken })))
+      ) {
         throw new Error();
       }
 
