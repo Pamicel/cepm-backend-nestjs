@@ -1,5 +1,5 @@
 import { IsNumber, Max, Min } from 'class-validator';
-import { PermissionLevel } from 'src/auth/permission-level.enum';
+import { PermissionLevel } from '../../auth/permission-level.enum';
 
 export class UpdateUserPermissionDto {
   @IsNumber()
