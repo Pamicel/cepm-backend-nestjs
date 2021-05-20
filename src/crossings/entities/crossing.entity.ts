@@ -1,6 +1,7 @@
 import { SerializeOptions } from '@nestjs/common';
 import { Expose } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Death } from '../../death/entities/death.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -28,6 +29,9 @@ export class Crossing {
   @Expose()
   @Column({ type: 'date' })
   dateCreated: string;
+
+  @OneToMany(() => Death, (death) => death.crossing)
+  deaths: Death[];
 
   @Expose()
   get crossingNumber(): number {

@@ -1,7 +1,14 @@
 import { Exclude, Expose } from 'class-transformer';
 import { PermissionLevel } from '../../auth/permission-level.enum';
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BeforeInsert,
+  OneToMany,
+} from 'typeorm';
 import { SerializeOptions } from '@nestjs/common';
+import { Death } from '../../death/entities/death.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -46,6 +53,9 @@ export class User {
     default: PermissionLevel.User,
   })
   permissionLevel: PermissionLevel;
+
+  @OneToMany(() => Death, (death) => death.user)
+  deaths: Death[];
 
   @BeforeInsert()
   emailToLowerCase() {
