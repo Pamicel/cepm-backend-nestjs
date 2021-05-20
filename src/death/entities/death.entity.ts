@@ -19,7 +19,7 @@ export class Death {
   @Column({ type: 'date' })
   dateCreated: string;
 
-  @ManyToOne(() => User, (user) => user.deaths)
+  @ManyToOne(() => User, (user) => user.deaths, { cascade: ['insert'] })
   user: User;
 
   @ManyToOne(() => Crossing, (crossing) => crossing.deaths)

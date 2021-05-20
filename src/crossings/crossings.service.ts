@@ -9,7 +9,7 @@ import { Crossing } from './entities/crossing.entity';
 export class CrossingsService {
   constructor(
     @InjectRepository(Crossing)
-    private crossingRepository: Repository<Crossing>, // private authService: AuthService,
+    private crossingRepository: Repository<Crossing>,
   ) {}
 
   create(createCrossingDto: CreateCrossingDto) {

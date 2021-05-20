@@ -24,6 +24,7 @@ export class User {
   @Expose()
   @Column({
     unique: true,
+    nullable: true,
   })
   email: string;
 
@@ -59,6 +60,15 @@ export class User {
 
   @BeforeInsert()
   emailToLowerCase() {
-    this.email = this.email.toLowerCase();
+    if (this.email) {
+      this.email = this.email.toLowerCase();
+    }
+  }
+
+  @BeforeInsert()
+  addDateCreated() {
+    if (!this.dateCreated) {
+      this.dateCreated = new Date().toISOString();
+    }
   }
 }

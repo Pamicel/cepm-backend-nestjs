@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CrossingsService } from './crossings.service';
 import { CreateCrossingDto } from './dto/create-crossing.dto';
 import { UpdateCrossingDto } from './dto/update-crossing.dto';
 
+@ApiTags('crossings')
 @Controller('crossings')
 export class CrossingsController {
   constructor(private readonly crossingsService: CrossingsService) {}

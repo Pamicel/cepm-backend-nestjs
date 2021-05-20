@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Header, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Req } from '@nestjs/common';
 import { RequestMagicTokenDto } from './dto/request-magic-token.dto';
 import { AuthService } from './auth.service';
 import { MagicLoginDto, PasswordLoginDto } from './dto/login.dto';
 import { Public } from './public.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
