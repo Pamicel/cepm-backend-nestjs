@@ -36,10 +36,11 @@ export class User {
   @Column({ type: 'date', nullable: true })
   tokenIssued: string;
 
+  @Expose()
   @Column({ type: 'date' })
   dateCreated: string;
 
-  @Exclude()
+  @Expose()
   @Column({
     type: 'int',
     default: PermissionLevel.User,

@@ -12,6 +12,7 @@ import { CaslModule } from './casl/casl.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { EmailModule } from './email/email.module';
 import { EmailService } from './email/email.service';
+import { CrossingsModule } from './crossings/crossings.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EmailService } from './email/email.service';
     AuthModule,
     CaslModule,
     EmailModule,
+    CrossingsModule,
   ],
   controllers: [AppController],
   providers: [
