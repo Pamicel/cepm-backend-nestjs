@@ -19,6 +19,7 @@ export class CrossingsService {
     const crossingObj = {
       ...createCrossingDto,
       startDate: date.toISOString(),
+      dateCreated: new Date().toISOString(),
     };
     const crossing = this.crossingRepository.create(crossingObj);
     return this.crossingRepository.save(crossing);

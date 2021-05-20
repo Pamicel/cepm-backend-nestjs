@@ -26,6 +26,10 @@ export class Crossing {
   startDate: string;
 
   @Expose()
+  @Column({ type: 'date' })
+  dateCreated: string;
+
+  @Expose()
   get crossingNumber(): number {
     /**
      * This number represents (approximately)
