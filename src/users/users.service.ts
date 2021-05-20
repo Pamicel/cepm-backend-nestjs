@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 // import { AuthService } from '../auth/auth.service';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -23,9 +24,10 @@ export class UsersService {
       throw new HttpException('Email already used', HttpStatus.CONFLICT);
     }
     const dateCreated = new Date().toISOString();
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.usersRepository.create({
       email,
-      password,
+      password: hashedPassword,
       dateCreated,
     });
     return this.usersRepository.save(newUser);
@@ -104,6 +106,20 @@ export class UsersService {
   ): Promise<User> {
     const user = await this.findOne(id);
     user.permissionLevel = permissionLevel;
+    return this.usersRepository.save(user);
+  }
+
+  async updateUserPassword(
+    id: number,
+    { newPassword, oldPassword }: { newPassword: string; oldPassword: string },
+  ): Promise<User> {
+    const user = await this.findOne(id);
+    console.log({ oldPassword, newPassword });
+    const passwordCorrect = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordCorrect) {
+      throw new HttpException('Invalid password', HttpStatus.FORBIDDEN);
+    }
+    user.password = await bcrypt.hash(newPassword, 10);
     return this.usersRepository.save(user);
   }
 }

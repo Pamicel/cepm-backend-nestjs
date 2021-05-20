@@ -22,6 +22,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
 import { PermissionLevel } from '../auth/permission-level.enum';
 import { UpdateUserPermissionDto } from './dto/update-user-permission.dto';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -70,11 +71,33 @@ export class UsersController {
     return this.usersService.updateUserPermission(+id, updatePermissionDto);
   }
 
+  @Patch(':id/password')
+  updatePassword(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdateUserPasswordDto,
+    @Req() req,
+  ): Promise<User> {
+    const { user } = req;
+    if (
+      user.id !== parseInt(id) &&
+      user.permissionLevel < PermissionLevel.Admin
+    ) {
+      throw new HttpException(
+        'You can only update your own password',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    return this.usersService.updateUserPassword(+id, updatePasswordDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req): Promise<User> {
     const { user } = req;
-    if (user.id !== id && user.permissionLevel < PermissionLevel.Admin) {
-      throw new HttpException('Can only delete self', HttpStatus.UNAUTHORIZED);
+    if (
+      user.id !== parseInt(id) &&
+      user.permissionLevel < PermissionLevel.Admin
+    ) {
+      throw new HttpException('Can only delete self', HttpStatus.FORBIDDEN);
     }
     return this.usersService.deleteUser(+id, user.permissionLevel);
   }
