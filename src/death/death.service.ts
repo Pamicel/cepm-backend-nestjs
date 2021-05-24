@@ -31,19 +31,25 @@ export class DeathService {
     return this.deathRepository.save(death);
   }
 
-  findAll() {
-    return `This action returns all death`;
+  findAll(): Promise<Death[]> {
+    return this.deathRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} death`;
+  findOne(id: number): Promise<Death> {
+    return this.deathRepository.findOneOrFail(id);
   }
 
-  update(id: number, updateDeathDto: UpdateDeathDto) {
-    return `This action updates a #${id} death`;
+  async update(id: number, updateDeathDto: UpdateDeathDto): Promise<Death> {
+    const death = await this.deathRepository.findOneOrFail(id);
+    const newDeath = {
+      ...death,
+      ...updateDeathDto,
+    };
+    return this.deathRepository.save(newDeath);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} death`;
+  async remove(id: number) {
+    const death = await this.deathRepository.findOneOrFail(id);
+    return this.deathRepository.remove(death);
   }
 }
