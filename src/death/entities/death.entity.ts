@@ -27,13 +27,19 @@ export class Death {
   @Column({ type: 'date' })
   dateCreated: string;
 
-  @ManyToOne(() => User, (user) => user.deaths, { cascade: ['insert'] })
+  @Expose()
+  @ManyToOne(() => User, (user) => user.deaths, {
+    cascade: ['insert'],
+    eager: true,
+  })
   user: User;
 
+  @Expose()
   @ManyToOne(() => Crossing, (crossing) => crossing.deaths)
   crossing: Crossing;
 
-  @OneToOne(() => DeathForm, (deathForm) => deathForm.death)
+  @Expose()
+  @OneToOne(() => DeathForm, (deathForm) => deathForm.death, { eager: true })
   @JoinColumn()
   deathForm: DeathForm;
 }
