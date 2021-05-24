@@ -1,8 +1,16 @@
 import { SerializeOptions } from '@nestjs/common';
 import { Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Crossing } from '../../crossings/entities/crossing.entity';
+import { DeathForm } from '../../death-form/entities/death-form.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -24,4 +32,8 @@ export class Death {
 
   @ManyToOne(() => Crossing, (crossing) => crossing.deaths)
   crossing: Crossing;
+
+  @OneToOne(() => DeathForm, (deathForm) => deathForm.death)
+  @JoinColumn()
+  deathForm: DeathForm;
 }

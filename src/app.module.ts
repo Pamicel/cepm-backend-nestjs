@@ -14,6 +14,7 @@ import { EmailModule } from './email/email.module';
 import { EmailService } from './email/email.service';
 import { CrossingsModule } from './crossings/crossings.module';
 import { DeathModule } from './death/death.module';
+import { DeathFormModule } from './death-form/death-form.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { DeathModule } from './death/death.module';
     EmailModule,
     CrossingsModule,
     DeathModule,
+    DeathFormModule,
   ],
   controllers: [AppController],
   providers: [
