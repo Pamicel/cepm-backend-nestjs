@@ -31,10 +31,10 @@ export class Crossing {
   @Column({ type: 'date' })
   dateCreated: string;
 
-  @OneToMany(() => Death, (death) => death.crossing, { eager: true })
+  @OneToMany(() => Death, (death) => death.crossing)
   deaths: Death[];
 
-  @OneToMany(() => DeathGroup, (group) => group.crossing, { eager: true })
+  @OneToMany(() => DeathGroup, (group) => group.crossing)
   groups: DeathGroup[];
 
   @Expose()

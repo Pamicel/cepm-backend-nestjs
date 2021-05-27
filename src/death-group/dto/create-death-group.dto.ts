@@ -1,14 +1,17 @@
-import { IsInt, IsOptional } from 'class-validator';
+import { IsInt, IsNotEmpty, ValidateIf } from 'class-validator';
 import { CreateDeathDto } from 'src/death/dto/create-death.dto';
 
 export class CreateDeathGroupDto {
-  @IsOptional()
+  @ValidateIf((o) => !o.deathsToCreate || o.deathsToCreate.length === 0)
+  @IsNotEmpty()
   @IsInt({ each: true })
-  deathIds: number[];
+  deathIds?: number[];
 
-  @IsOptional()
-  deathsToCreate: CreateDeathDto[];
+  @ValidateIf((o) => !o.deathIds || o.deathIds.length === 0)
+  @IsNotEmpty()
+  deathsToCreate?: CreateDeathDto[];
 
   @IsInt()
+  @IsNotEmpty()
   crossingId: number;
 }

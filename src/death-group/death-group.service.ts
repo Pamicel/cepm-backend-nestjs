@@ -20,7 +20,7 @@ export class DeathGroupService {
   ) {}
 
   private async getDeathsIfValid(
-    deathIds: number[],
+    deathIds: number[] = [],
     crossingId: number,
   ): Promise<Death[]> {
     const deathList = await this.deathRepository
@@ -46,27 +46,43 @@ export class DeathGroupService {
     const { deathIds, crossingId, deathsToCreate } = createDeathGroupDto;
 
     const newDeaths: Death[] = [];
-    try {
-      if (deathsToCreate) {
+    if (deathsToCreate) {
+      // Check that all deaths have the correct crossingId
+      const wrongCrossingId = deathsToCreate.filter(
+        (deathDto) => deathDto.crossingId !== crossingId,
+      );
+      if (wrongCrossingId.length !== 0) {
+        throw new HttpException(
+          'deathsToCreate must have the correct crossingId',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      try {
+        // Try to create the new deaths
         for (const deathDto of deathsToCreate) {
           newDeaths.push(await this.deathService.create(deathDto));
         }
-      }
-    } catch (error) {
-      console.error(error);
-      // In case of error, erase all deaths created
-      for (const death of newDeaths) {
-        await this.deathService.remove(death.id);
+      } catch (error) {
+        console.error(error);
+        // In case of error, erase all deaths created
+        for (const death of newDeaths) {
+          await this.deathService.remove(death.id);
+        }
       }
     }
 
+    // Collect all deaths in the deathIds list, throw if any invalid (not found or wrong group/crossing )
     const deathList = await this.getDeathsIfValid(deathIds, crossingId);
+    // Find the crossing
     const crossing = await this.crossingService.findOne(crossingId);
+    // Create the death object with everything
     const newDeathGroup = this.deathGroupRepository.create({
       crossing,
       deaths: [...deathList, ...newDeaths],
     });
 
+    // Save the death object
     return this.deathGroupRepository.save(newDeathGroup);
   }
 
