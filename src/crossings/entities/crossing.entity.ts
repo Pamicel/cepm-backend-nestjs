@@ -2,6 +2,7 @@ import { SerializeOptions } from '@nestjs/common';
 import { Expose } from 'class-transformer';
 import { Death } from '../../death/entities/death.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { DeathGroup } from '../../death-group/entities/death-group.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -30,8 +31,11 @@ export class Crossing {
   @Column({ type: 'date' })
   dateCreated: string;
 
-  @OneToMany(() => Death, (death) => death.crossing)
+  @OneToMany(() => Death, (death) => death.crossing, { eager: true })
   deaths: Death[];
+
+  @OneToMany(() => DeathGroup, (group) => group.crossing, { eager: true })
+  groups: DeathGroup[];
 
   @Expose()
   get crossingNumber(): number {

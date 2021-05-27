@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Crossing } from '../../crossings/entities/crossing.entity';
 import { DeathForm } from '../../death-form/entities/death-form.entity';
+import { DeathGroup } from '../../death-group/entities/death-group.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -39,7 +40,14 @@ export class Death {
   crossing: Crossing;
 
   @Expose()
+  @Column({ default: false })
+  isSimulation: boolean;
+
+  @Expose()
   @OneToOne(() => DeathForm, (deathForm) => deathForm.death, { eager: true })
   @JoinColumn()
   deathForm: DeathForm;
+
+  @ManyToOne(() => DeathGroup, (group) => group.deaths)
+  group: DeathGroup;
 }

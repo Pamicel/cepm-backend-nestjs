@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { DeathFormService } from './death-form.service';
 import { CreateDeathFormDto } from './dto/create-death-form.dto';
 import { UpdateDeathFormDto } from './dto/update-death-form.dto';
 
+@ApiTags('death-forms')
 @Controller('death-form')
 export class DeathFormController {
   constructor(private readonly deathFormService: DeathFormService) {}
