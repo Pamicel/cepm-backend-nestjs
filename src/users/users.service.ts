@@ -22,13 +22,19 @@ export class UsersService {
     if (existingUser) {
       throw new HttpException('Email already used', HttpStatus.CONFLICT);
     }
+
     const dateCreated = new Date().toISOString();
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = this.usersRepository.create({
+    const newUserObject: Partial<User> = {
       email,
-      password: hashedPassword,
       dateCreated,
-    });
+    };
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      newUserObject.password = hashedPassword;
+    }
+
+    const newUser = this.usersRepository.create(newUserObject);
     return this.usersRepository.save(newUser);
   }
 
