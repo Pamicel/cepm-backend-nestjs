@@ -4,7 +4,8 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import config from '../ormconfig';
+import ormConfig from '../ormconfig';
+import ormConfigTesting from '../ormconfig-testing';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { PermissionsGuard } from './auth/permission-level.guard';
@@ -15,13 +16,23 @@ import { EmailService } from './email/email.service';
 import { CrossingsModule } from './crossings/crossings.module';
 import { DeathModule } from './death/death.module';
 import { DeathFormModule } from './death-form/death-form.module';
+import { DeathGroupModule } from './death-group/death-group.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot(config),
+    TypeOrmModule.forRoot(
+      process.env.NODE_ENV === 'test'
+        ? {
+            ...ormConfigTesting,
+            keepConnectionAlive: true,
+            autoLoadEntities: true,
+            migrationsRun: true,
+          }
+        : ormConfig,
+    ),
     UsersModule,
     AuthModule,
     CaslModule,
@@ -29,19 +40,23 @@ import { DeathFormModule } from './death-form/death-form.module';
     CrossingsModule,
     DeathModule,
     DeathFormModule,
+    DeathGroupModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useExisting: JwtAuthGuard,
     },
+    JwtAuthGuard,
     {
       provide: APP_GUARD,
-      useClass: PermissionsGuard,
+      useExisting: PermissionsGuard,
     },
+    PermissionsGuard,
     EmailService,
   ],
+  exports: [TypeOrmModule],
 })
 export class AppModule {}
