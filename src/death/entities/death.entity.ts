@@ -29,6 +29,10 @@ export class Death {
   dateCreated: string;
 
   @Expose()
+  @Column({ default: false })
+  isSimulation: boolean;
+
+  @Expose()
   @ManyToOne(() => User, (user) => user.deaths, {
     cascade: ['insert'],
     eager: true,
@@ -38,10 +42,6 @@ export class Death {
   @Expose()
   @ManyToOne(() => Crossing, (crossing) => crossing.deaths)
   crossing: Crossing;
-
-  @Expose()
-  @Column({ default: false })
-  isSimulation: boolean;
 
   @Expose()
   @OneToOne(() => DeathForm, (deathForm) => deathForm.death, { eager: true })

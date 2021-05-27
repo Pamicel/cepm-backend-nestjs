@@ -8,6 +8,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdateDeathFormDto } from 'src/death-form/dto/update-death-form.dto';
+import { CreateDeathFormDto } from '../death-form/dto/create-death-form.dto';
 import { DeathService } from './death.service';
 import { CreateDeathDto } from './dto/create-death.dto';
 import { UpdateDeathDto } from './dto/update-death.dto';
@@ -40,5 +42,21 @@ export class DeathController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.deathService.remove(+id);
+  }
+
+  @Post(':id/form')
+  createForm(
+    @Param('id') id: string,
+    @Body() createDeathFormDto: CreateDeathFormDto,
+  ) {
+    return this.deathService.createForm(+id, createDeathFormDto);
+  }
+
+  @Patch(':id/form')
+  updateForm(
+    @Param('id') id: string,
+    @Body() updateDeathFormDto: UpdateDeathFormDto,
+  ) {
+    return this.deathService.updateForm(+id, updateDeathFormDto);
   }
 }

@@ -1,15 +1,15 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, ValidateIf } from 'class-validator';
 
 export class CreateDeathDto {
+  @ValidateIf((o: CreateDeathDto) => !o.crossingId)
   @IsNumber()
-  @IsOptional()
   userId?: number;
 
-  // @IsBoolean()
-  // @IsOptional()
-  // copyDeathForm?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isSimulation?: boolean;
 
-  @IsNotEmpty()
+  @ValidateIf((o: CreateDeathDto) => o.isSimulation === false)
   @IsNumber()
-  crossingId: number;
+  crossingId?: number;
 }
