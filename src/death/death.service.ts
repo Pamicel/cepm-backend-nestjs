@@ -117,6 +117,16 @@ export class DeathService {
     return this.deathRepository.findOneOrFail(id);
   }
 
+  findByCrossing(crossingId: number): Promise<Death[]> {
+    return this.deathRepository.find({
+      where: {
+        crossing: {
+          id: crossingId,
+        },
+      },
+    });
+  }
+
   async update(id: number, updateDeathDto: UpdateDeathDto): Promise<Death> {
     const death = await this.deathRepository.findOneOrFail(id);
     const newDeath = {

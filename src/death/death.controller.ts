@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateDeathFormDto } from 'src/death-form/dto/update-death-form.dto';
@@ -25,8 +26,8 @@ export class DeathController {
   }
 
   @Get()
-  findAll() {
-    return this.deathService.findAll();
+  findAll(@Query('crossing') crossingId: string) {
+    return this.deathService.findByCrossing(+crossingId);
   }
 
   @Get(':id')
