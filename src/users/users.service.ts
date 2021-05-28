@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { Death } from 'src/death/entities/death.entity';
 
 @Injectable()
 export class UsersService {
@@ -23,10 +24,12 @@ export class UsersService {
       throw new HttpException('Email already used', HttpStatus.CONFLICT);
     }
 
-    const dateCreated = new Date().toISOString();
+    const simulatedDeath: Death = new Death({
+      isSimulation: true,
+    });
     const newUserObject: Partial<User> = {
       email,
-      dateCreated,
+      deaths: [simulatedDeath],
     };
 
     if (password) {

@@ -20,6 +20,7 @@
     "test:debug": "NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:revert": "yarn run typeorm migration:revert",
     "migration:empty": "yarn run typeorm migration:create -- -n",
     "migration:generate": "yarn run build && yarn run typeorm migration:generate -- -n",
     "migration:run": "yarn run build && yarn run typeorm migration:run"
