@@ -36,7 +36,7 @@ export class CaslAbilityFactory {
 
     // Users can only fully manage users with lower permission level than themselves
     can(Action.Manage, User, {
-      permissionLevel: { $lt: user.permissionLevel },
+      permissionLevel: { $gt: user.permissionLevel },
     });
     can(Action.Read, User, { id: user.id });
     can(Action.Update, User, ['email', 'password'], { id: user.id });

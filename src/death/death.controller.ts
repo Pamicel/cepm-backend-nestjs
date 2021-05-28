@@ -26,8 +26,16 @@ export class DeathController {
   }
 
   @Get()
-  findAll(@Query('crossing') crossingId: string) {
-    return this.deathService.findByCrossing(+crossingId);
+  findAll(
+    @Query('crossing') crossingId: number,
+    @Query('user') userId: number,
+  ) {
+    if (crossingId) {
+      return this.deathService.findByCrossing(crossingId);
+    } else if (userId) {
+      return this.deathService.findByUser(userId);
+    }
+    return this.deathService.findAll();
   }
 
   @Get(':id')

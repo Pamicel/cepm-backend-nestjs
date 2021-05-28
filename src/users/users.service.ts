@@ -50,12 +50,17 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
-    if (!id) {
-      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-    }
+  async findOne(id: number, options?: { full?: boolean }): Promise<User> {
     try {
-      return this.usersRepository.findOneOrFail(id);
+      if (options?.full) {
+        const user = await this.usersRepository.findOneOrFail(id, {
+          relations: ['deaths'],
+        });
+        return user;
+      } else {
+        const user = await this.usersRepository.findOneOrFail(id);
+        return user;
+      }
     } catch (error) {
       throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
     }

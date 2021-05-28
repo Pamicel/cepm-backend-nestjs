@@ -6,12 +6,12 @@ import {
   Param,
   Delete,
   Patch,
-  Request,
   ClassSerializerInterceptor,
   UseInterceptors,
   Req,
   HttpException,
   HttpStatus,
+  Query,
   // SerializeOptions,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -23,12 +23,16 @@ import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
 import { PermissionLevel } from '../auth/permission-level.enum';
 import { UpdateUserPermissionDto } from './dto/update-user-permission.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
+import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 
 @ApiTags('users')
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private caslAbilityFactory: CaslAbilityFactory,
+  ) {}
 
   @Post()
   @RequiredPermissionLevel(PermissionLevel.Staff)
@@ -43,14 +47,18 @@ export class UsersController {
   }
 
   @Get(':id')
-  @RequiredPermissionLevel(PermissionLevel.Staff)
-  findOne(@Param('id') id: string): Promise<User> {
-    return this.usersService.findOne(+id);
-  }
-
-  @Get('me')
-  findSelf(@Request() req): Promise<User> {
-    return this.usersService.findOne(req.user.id);
+  findOne(
+    @Param('id') id: string,
+    @Query('full') full: boolean,
+    @Req() req,
+  ): Promise<User> {
+    const { user } = req;
+    const ability = this.caslAbilityFactory.createForUser(user);
+    if (ability.can(Action.Read, new User({ id: +id }))) {
+      return this.usersService.findOne(+id, { full });
+    } else {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
   }
 
   @Patch(':id')
