@@ -2,6 +2,7 @@ import { SerializeOptions } from '@nestjs/common';
 import { Expose } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -50,4 +51,11 @@ export class Death {
 
   @ManyToOne(() => DeathGroup, (group) => group.deaths)
   group: DeathGroup;
+
+  @BeforeInsert()
+  addDateCreated() {
+    if (!this.dateCreated) {
+      this.dateCreated = new Date().toISOString();
+    }
+  }
 }

@@ -1,7 +1,13 @@
 import { SerializeOptions } from '@nestjs/common';
 import { Expose } from 'class-transformer';
 import { Death } from '../../death/entities/death.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { DeathGroup } from '../../death-group/entities/death-group.entity';
 
 @Entity()
@@ -49,5 +55,12 @@ export class Crossing {
     const crossingId = this.id ?? 0;
 
     return baseNumber + crossingId;
+  }
+
+  @BeforeInsert()
+  addDateCreated() {
+    if (!this.dateCreated) {
+      this.dateCreated = new Date().toISOString();
+    }
   }
 }
