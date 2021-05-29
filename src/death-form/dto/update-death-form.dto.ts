@@ -52,11 +52,11 @@ export class UpdateDeathFormDto extends PartialType(CreateDeathFormDto) {
   petDetails?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ each: true })
   importantPeopleRoles?: string[];
 
   @IsOptional()
-  @IsString()
+  @IsString({ each: true })
   importantPeopleNames?: string[];
 
   @IsOptional()

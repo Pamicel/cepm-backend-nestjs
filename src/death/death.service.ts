@@ -120,14 +120,16 @@ export class DeathService {
   findByCrossing(crossingId: number): Promise<Death[]> {
     return this.findAll({
       where: { crossing: { id: crossingId } },
-      loadRelationIds: true,
+      loadRelationIds: { relations: ['user', 'crossing'] },
+      relations: ['deathForm'],
     });
   }
 
   findByUser(userId: number): Promise<Death[]> {
     return this.findAll({
       where: { user: { id: userId } },
-      loadRelationIds: true,
+      loadRelationIds: { relations: ['user', 'crossing'] },
+      relations: ['deathForm'],
     });
   }
 
