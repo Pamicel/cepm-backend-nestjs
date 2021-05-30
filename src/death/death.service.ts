@@ -6,12 +6,13 @@ import { CreateDeathDto } from './dto/create-death.dto';
 import { UpdateDeathDto } from './dto/update-death.dto';
 import { Death } from './entities/death.entity';
 import { CrossingsService } from '../crossings/crossings.service';
-import { DeathForm } from 'src/death-form/entities/death-form.entity';
-import { DeathFormService } from 'src/death-form/death-form.service';
-import { CreateDeathFormDto } from 'src/death-form/dto/create-death-form.dto';
-import { UpdateDeathFormDto } from 'src/death-form/dto/update-death-form.dto';
-import { Crossing } from 'src/crossings/entities/crossing.entity';
-import { User } from 'src/users/entities/user.entity';
+import { DeathForm } from '../death-form/entities/death-form.entity';
+import { DeathFormService } from '../death-form/death-form.service';
+import { CreateDeathFormDto } from '../death-form/dto/create-death-form.dto';
+import { UpdateDeathFormDto } from '../death-form/dto/update-death-form.dto';
+import { Crossing } from '../crossings/entities/crossing.entity';
+import { User } from '../users/entities/user.entity';
+import deathIdcWords from './death-idc-words';
 
 @Injectable()
 export class DeathService {
@@ -57,20 +58,6 @@ export class DeathService {
       );
     }
 
-    if (crossing) {
-      // Check that user doesn't have a death on this crossing
-      const userDeaths = await this.deathRepository.find({
-        where: { user, crossing },
-      });
-
-      if (userDeaths.length !== 0) {
-        throw new HttpException(
-          'Only one death per crossing per user',
-          HttpStatus.CONFLICT,
-        );
-      }
-    }
-
     // Find user's simulated death
     const deathSimulation: Death = await this.deathRepository.findOne({
       where: { isSimulation: true, user },
@@ -106,7 +93,21 @@ export class DeathService {
     }
 
     // Save
-    return this.deathRepository.save(death);
+    const savedDeath = await this.deathRepository.save(death);
+
+    // assign idc if necessary
+    await this.deathRepository.query(
+      `
+      UPDATE
+        death AS d
+      SET
+        idc = ( SELECT count(id) + 1 FROM death WHERE id < d.id AND crossingId = d.crossingId )
+      WHERE isSimulation = FALSE AND id = ?
+      `,
+      [savedDeath.id],
+    );
+
+    return savedDeath;
   }
 
   findAll(options?: FindManyOptions): Promise<Death[]> {
@@ -115,6 +116,28 @@ export class DeathService {
 
   findOne(id: number): Promise<Death> {
     return this.deathRepository.findOneOrFail(id);
+  }
+
+  findOneByUID(
+    deathUID: number,
+    crossingId: number,
+    deathIdcWord: string,
+  ): Promise<Death> {
+    try {
+      if (deathIdcWords[deathUID - 1] !== deathIdcWord) {
+        throw new Error('wrong word');
+      }
+
+      return this.deathRepository.findOneOrFail({
+        where: { idc: deathUID, crossing: { id: crossingId } },
+        relations: ['user'],
+      });
+    } catch (error) {
+      throw new HttpException(
+        'Invalid death number or word',
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
   findByCrossing(crossingId: number): Promise<Death[]> {

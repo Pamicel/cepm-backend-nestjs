@@ -12,10 +12,21 @@ export class PermissionsGuard implements CanActivate {
       PERMISSIONS_KEY,
       [context.getHandler(), context.getClass()],
     );
-    if (!requiredPermLevel) {
+    if (requiredPermLevel === undefined || requiredPermLevel === null) {
       return true;
     }
+
     const { user } = context.switchToHttp().getRequest();
+
+    // Can use locked if jwt has locked crossing
+    if (
+      requiredPermLevel === PermissionLevel.Locked &&
+      user.jwtInfos.lockCrossing !== undefined &&
+      user.jwtInfos.lockCrossing !== null
+    ) {
+      return true;
+    }
+
     return requiredPermLevel <= user.permissionLevel;
   }
 }

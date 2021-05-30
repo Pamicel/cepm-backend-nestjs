@@ -45,6 +45,10 @@ export class Death {
   crossing: Crossing;
 
   @Expose()
+  @Column({ nullable: true })
+  idc?: number;
+
+  @Expose()
   @OneToOne(() => DeathForm, (deathForm) => deathForm.death, { eager: true })
   @JoinColumn()
   deathForm: DeathForm;

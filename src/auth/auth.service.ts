@@ -4,6 +4,18 @@ import { EmailService } from '../email/email.service';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
+import { CrossingsService } from 'src/crossings/crossings.service';
+import { DeathService } from 'src/death/death.service';
+
+export class JWTPayload {
+  constructor(
+    public email: string,
+    public id: number,
+    public permissionLevel: number,
+    public lockCrossing?: number,
+    public impersonator?: number,
+  ) {}
+}
 
 @Injectable()
 export class AuthService {
@@ -11,25 +23,12 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private emailService: EmailService,
+    private deathService: DeathService,
+    private crossingsService: CrossingsService,
   ) {}
 
-  private signJWT({
-    email,
-    id,
-    dateCreated,
-    permissionLevel,
-  }: {
-    email: string;
-    id: number;
-    dateCreated: string;
-    permissionLevel: number;
-  }) {
-    return this.jwtService.sign({
-      email,
-      id,
-      dateCreated,
-      permissionLevel,
-    });
+  private signJWT(payload: JWTPayload): string {
+    return this.jwtService.sign(payload);
   }
 
   async validatePassword({ user, password }: { user: User; password: string }) {
@@ -80,7 +79,6 @@ export class AuthService {
       return this.signJWT({
         email,
         id: user.id,
-        dateCreated: user.dateCreated,
         permissionLevel: user.permissionLevel,
       });
     } catch (error) {
@@ -125,17 +123,69 @@ export class AuthService {
     return this.signJWT({
       email: user.email,
       id: user.id,
-      dateCreated: user.dateCreated,
       permissionLevel: user.permissionLevel,
+      lockCrossing: user.jwtInfos.lockCrossing,
+      impersonator: user.jwtInfos.impersonator,
     });
   }
 
-  async renew(user): Promise<string> {
+  async lock(user, crossingId: number): Promise<string> {
+    try {
+      !(await this.crossingsService.findOne(crossingId));
+    } catch (error) {
+      throw new HttpException('Crossing not found', HttpStatus.NOT_FOUND);
+    }
+
     return this.signJWT({
-      email: user.email,
       id: user.id,
-      dateCreated: user.dateCreated,
+      email: user.email,
       permissionLevel: user.permissionLevel,
+      lockCrossing: crossingId,
     });
+  }
+
+  async unlock(adminId: number, email: string) {
+    try {
+      const user = await this.usersService.findOne(adminId);
+      if (user?.email === email) {
+        return this.createMagicToken(email);
+      }
+    } catch (error) {
+      throw new HttpException(
+        'Admin user does not exist',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async impersonate({
+    adminId,
+    deathUID,
+    crossingId,
+    word,
+  }: {
+    adminId: number;
+    deathUID?: number;
+    crossingId?: number;
+    word: string;
+  }) {
+    try {
+      const death = await this.deathService.findOneByUID(
+        deathUID,
+        crossingId,
+        word,
+      );
+      const { user } = death;
+
+      return this.signJWT({
+        email: user.email,
+        id: user.id,
+        permissionLevel: user.permissionLevel,
+        lockCrossing: crossingId,
+        impersonator: adminId,
+      });
+    } catch (error) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
   }
 }
