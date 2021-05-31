@@ -1,4 +1,4 @@
-const deathIdcWords: string[] = [
+export const deathIdcWords: string[] = [
   'dehors',
   'manteau',
   'blouse',
@@ -49,4 +49,15 @@ const deathIdcWords: string[] = [
   'communique',
 ];
 
-export default deathIdcWords;
+export const crossingIdWords: string[] = [
+  'projection',
+  'mortel',
+  'optimal',
+  'couleur',
+  'forme',
+  'appel',
+  'face',
+  'presque',
+  'fleur',
+  'bilan',
+];

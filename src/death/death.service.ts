@@ -12,7 +12,7 @@ import { CreateDeathFormDto } from '../death-form/dto/create-death-form.dto';
 import { UpdateDeathFormDto } from '../death-form/dto/update-death-form.dto';
 import { Crossing } from '../crossings/entities/crossing.entity';
 import { User } from '../users/entities/user.entity';
-import deathIdcWords from './death-idc-words';
+import { crossingIdWords, deathIdcWords } from './id-words';
 
 @Injectable()
 export class DeathService {
@@ -118,18 +118,26 @@ export class DeathService {
     return this.deathRepository.findOneOrFail(id);
   }
 
-  findOneByUID(
-    deathUID: number,
+  findOneByIDC(
+    deathIDC: number,
     crossingId: number,
     deathIdcWord: string,
+    crossingIdWord: string,
   ): Promise<Death> {
     try {
-      if (deathIdcWords[deathUID - 1] !== deathIdcWord) {
+      if (deathIdcWords[deathIDC - 1] !== deathIdcWord) {
+        throw new Error('wrong word');
+      }
+
+      if (
+        crossingIdWords[(crossingId - 1) % crossingIdWords.length] !==
+        crossingIdWord
+      ) {
         throw new Error('wrong word');
       }
 
       return this.deathRepository.findOneOrFail({
-        where: { idc: deathUID, crossing: { id: crossingId } },
+        where: { idc: deathIDC, crossing: { id: crossingId } },
         relations: ['user'],
       });
     } catch (error) {

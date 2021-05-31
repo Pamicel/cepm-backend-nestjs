@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
 import { CrossingsService } from 'src/crossings/crossings.service';
 import { DeathService } from 'src/death/death.service';
+import { PermissionLevel } from './permission-level.enum';
 
 export class JWTPayload {
   constructor(
@@ -131,7 +132,7 @@ export class AuthService {
 
   async lock(user, crossingId: number): Promise<string> {
     try {
-      !(await this.crossingsService.findOne(crossingId));
+      await this.crossingsService.findOne(crossingId);
     } catch (error) {
       throw new HttpException('Crossing not found', HttpStatus.NOT_FOUND);
     }
@@ -144,36 +145,58 @@ export class AuthService {
     });
   }
 
-  async unlock(adminId: number, email: string) {
+  async revertImpersonation(reqUser): Promise<string> {
+    const staffId = reqUser.jwtInfos.impersonator;
+
     try {
-      const user = await this.usersService.findOne(adminId);
-      if (user?.email === email) {
-        return this.createMagicToken(email);
+      const user = await this.usersService.findOne(staffId);
+      if (user.permissionLevel < PermissionLevel.Staff) {
+        throw new Error('Only staff can lock/impersonate');
       }
+      return this.signJWT({
+        id: user.id,
+        email: user.email,
+        permissionLevel: user.permissionLevel,
+        lockCrossing: reqUser.jwtInfos.lockCrossing,
+      });
     } catch (error) {
-      throw new HttpException(
-        'Admin user does not exist',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 
+  async unlock(email: string) {
+    let user: User;
+    try {
+      user = await this.usersService.findOneByEmail(email);
+    } catch (error) {
+      throw new HttpException('Email not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (user?.permissionLevel < PermissionLevel.Staff) {
+      throw new HttpException('Only staff can unlock', HttpStatus.FORBIDDEN);
+    }
+    return this.createMagicToken(email);
+  }
+
   async impersonate({
-    adminId,
-    deathUID,
+    staffId,
+    deathIDC,
     crossingId,
-    word,
+    deathWord,
+    crossingWord,
   }: {
-    adminId: number;
-    deathUID?: number;
-    crossingId?: number;
-    word: string;
+    staffId: number;
+    deathIDC: number;
+    crossingId: number;
+    deathWord: string;
+    crossingWord: string;
   }) {
     try {
-      const death = await this.deathService.findOneByUID(
-        deathUID,
+      const death = await this.deathService.findOneByIDC(
+        deathIDC,
         crossingId,
-        word,
+        deathWord,
+        crossingWord,
       );
       const { user } = death;
 
@@ -182,7 +205,7 @@ export class AuthService {
         id: user.id,
         permissionLevel: user.permissionLevel,
         lockCrossing: crossingId,
-        impersonator: adminId,
+        impersonator: staffId,
       });
     } catch (error) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);

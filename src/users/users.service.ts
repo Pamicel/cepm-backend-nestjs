@@ -127,7 +127,6 @@ export class UsersService {
     { newPassword, oldPassword }: { newPassword: string; oldPassword: string },
   ): Promise<User> {
     const user = await this.findOne(id);
-    console.log({ oldPassword, newPassword });
     const passwordCorrect = await bcrypt.compare(oldPassword, user.password);
     if (!passwordCorrect) {
       throw new HttpException('Invalid password', HttpStatus.FORBIDDEN);

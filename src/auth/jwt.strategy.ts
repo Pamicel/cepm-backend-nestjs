@@ -30,10 +30,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // If locked, check that crossing is valid and user has permission to lock
       if (payload.lockCrossing) {
         await this.crossingsRepository.findOne(payload.lockCrossing);
-        const lockUser = await this.usersRepository.findOne(payload.id);
-        if (lockUser.permissionLevel < PermissionLevel.Staff) {
-          throw new Error('Cannot lock');
-        }
       }
 
       // If impersonation, check that impersonator has permission to impersonate

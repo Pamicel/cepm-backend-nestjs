@@ -60,7 +60,6 @@ describe('AppController (e2e)', () => {
       .send(user)
       .expect(201);
 
-    console.log(response.body);
     expect(response.body).toMatchObject({ email: user.email });
   });
 
