@@ -7,13 +7,17 @@ import {
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UpdateDeathFormDto } from 'src/death-form/dto/update-death-form.dto';
+import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
+import { PermissionLevel } from '../auth/permission-level.enum';
+import { UpdateDeathFormDto } from '../death-form/dto/update-death-form.dto';
 import { CreateDeathFormDto } from '../death-form/dto/create-death-form.dto';
 import { DeathService } from './death.service';
 import { CreateDeathDto } from './dto/create-death.dto';
 import { UpdateDeathDto } from './dto/update-death.dto';
+import { deathIdcWords } from './id-words';
 
 @ApiTags('deaths')
 @Controller('death')
@@ -38,6 +42,12 @@ export class DeathController {
     return this.deathService.findAll();
   }
 
+  @RequiredPermissionLevel(PermissionLevel.Staff)
+  @Get('idc-words')
+  idWords(): string[] {
+    return deathIdcWords;
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.deathService.findOne(+id);
@@ -51,6 +61,13 @@ export class DeathController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.deathService.remove(+id);
+  }
+
+  @Post('form')
+  createFirstForm(@Req() req, @Body() createDeathFormDto: CreateDeathFormDto) {
+    const { user } = req;
+    const userId = user.id;
+    return this.deathService.createFirstForm(userId, createDeathFormDto);
   }
 
   @Post(':id/form')

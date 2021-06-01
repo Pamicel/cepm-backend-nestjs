@@ -1,11 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersService } from '../users/users.service';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CreateDeathDto } from './dto/create-death.dto';
 import { UpdateDeathDto } from './dto/update-death.dto';
 import { Death } from './entities/death.entity';
-import { CrossingsService } from '../crossings/crossings.service';
 import { DeathForm } from '../death-form/entities/death-form.entity';
 import { DeathFormService } from '../death-form/death-form.service';
 import { CreateDeathFormDto } from '../death-form/dto/create-death-form.dto';
@@ -19,22 +17,24 @@ export class DeathService {
   constructor(
     @InjectRepository(Death)
     private deathRepository: Repository<Death>,
+    @InjectRepository(Crossing)
+    private crossingRepository: Repository<Crossing>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private deathFormService: DeathFormService,
-    private usersService: UsersService,
-    private crossingsService: CrossingsService,
   ) {}
 
   async create(createDeathDto: CreateDeathDto): Promise<Death> {
     const { crossingId, userId, isSimulation } = createDeathDto;
 
     const crossing: Crossing = crossingId
-      ? await this.crossingsService.findOne(crossingId)
+      ? await this.crossingRepository.findOneOrFail(crossingId)
       : undefined;
 
     let user: Partial<User>;
     try {
       // Create an empty user if no userid given (throws if userid does not exist)
-      user = userId ? await this.usersService.findOne(userId) : {};
+      user = userId ? await this.userRepository.findOneOrFail(userId) : {};
     } catch (error) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -185,6 +185,11 @@ export class DeathService {
     if (death.deathForm) {
       throw new HttpException('Only one form per death', HttpStatus.CONFLICT);
     }
+    return this.deathFormService.create(death, dto);
+  }
+
+  async createFirstForm(userId: number, dto: CreateDeathFormDto) {
+    const death = await this.create({ userId, isSimulation: true });
     return this.deathFormService.create(death, dto);
   }
 

@@ -36,6 +36,24 @@ export class DeathFormService {
     return this.deathFormRepository.find();
   }
 
+  // async search({
+  //   firstname,
+  //   lastname,
+  // }: {
+  //   firstname: string;
+  //   lastname: string;
+  // }): Promise<DeathForm> {
+  //   return this.deathFormRepository.query(
+  //     `
+  //     SELECT *
+  //     FROM deathForm
+  //     WHERE firstname REGEXP :firstname
+  //     OR lastname REGEXP :lastname
+  //   `,
+  //     [{ firstname }, { lastname }],
+  //   );
+  // }
+
   findOne(id: number) {
     try {
       return this.deathFormRepository.findOneOrFail(id);
