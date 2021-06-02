@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { SerializeOptions } from '@nestjs/common';
 import { Death } from '../../death/entities/death.entity';
+import { Answer } from '../../questions-answers/entities/answer.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -57,6 +58,9 @@ export class User {
 
   @OneToMany(() => Death, (death) => death.user)
   deaths: Death[];
+
+  @OneToMany(() => Answer, (answer) => answer.user)
+  answers: Answer[];
 
   @BeforeInsert()
   emailToLowerCase() {

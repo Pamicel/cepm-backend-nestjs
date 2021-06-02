@@ -17,6 +17,7 @@ import { CrossingsModule } from './crossings/crossings.module';
 import { DeathModule } from './death/death.module';
 import { DeathFormModule } from './death-form/death-form.module';
 import { DeathGroupModule } from './death-group/death-group.module';
+import { QuestionsAnswersModule } from './questions-answers/questions-answers.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { DeathGroupModule } from './death-group/death-group.module';
     DeathModule,
     DeathFormModule,
     DeathGroupModule,
+    QuestionsAnswersModule,
   ],
   controllers: [AppController],
   providers: [
