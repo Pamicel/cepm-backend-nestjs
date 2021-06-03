@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
+// import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { Question } from './entities/question.entity';
 import { Answer } from './entities/answer.entity';
 import { Repository } from 'typeorm';
