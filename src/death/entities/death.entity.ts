@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { Crossing } from '../../crossings/entities/crossing.entity';
 import { DeathForm } from '../../death-form/entities/death-form.entity';
@@ -43,6 +44,9 @@ export class Death {
   @Expose()
   @ManyToOne(() => Crossing, (crossing) => crossing.deaths)
   crossing: Crossing;
+
+  @RelationId((death: Death) => death.crossing)
+  crossingId: number;
 
   @Expose()
   @Column({ nullable: true })

@@ -53,6 +53,7 @@ export class UsersService {
       if (options?.full) {
         const user = await this.usersRepository.findOneOrFail(id, {
           relations: ['deaths'],
+          loadRelationIds: { relations: ['crossing'] },
         });
         return user;
       } else {
