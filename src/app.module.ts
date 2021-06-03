@@ -18,6 +18,7 @@ import { DeathModule } from './death/death.module';
 import { DeathFormModule } from './death-form/death-form.module';
 import { DeathGroupModule } from './death-group/death-group.module';
 import { QuestionsAnswersModule } from './questions-answers/questions-answers.module';
+import { StaffVoteProfileModule } from './staff-vote-profile/staff-vote-profile.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { QuestionsAnswersModule } from './questions-answers/questions-answers.mo
     DeathFormModule,
     DeathGroupModule,
     QuestionsAnswersModule,
+    StaffVoteProfileModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,26 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStaffVoteProfileDto } from './dto/create-staff-vote-profile.dto';
-import { UpdateStaffVoteProfileDto } from './dto/update-staff-vote-profile.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StaffVoteProfile } from './entities/staff-vote-profile.entity';
 
 @Injectable()
 export class StaffVoteProfileService {
-  create(createStaffVoteProfileDto: CreateStaffVoteProfileDto) {
-    return 'This action adds a new staffVoteProfile';
-  }
-
+  constructor(
+    @InjectRepository(StaffVoteProfile)
+    private staffvoteprofileRepository: Repository<StaffVoteProfile>,
+  ) {}
   findAll() {
-    return `This action returns all staffVoteProfile`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} staffVoteProfile`;
-  }
-
-  update(id: number, updateStaffVoteProfileDto: UpdateStaffVoteProfileDto) {
-    return `This action updates a #${id} staffVoteProfile`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} staffVoteProfile`;
+    return this.staffvoteprofileRepository.find();
   }
 }

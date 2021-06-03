@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -23,6 +24,7 @@ export class StaffVoteProfile {
   @Column({ nullable: true })
   careerDetails: string;
 
+  @Expose()
   get incomplete(): boolean {
     const complete =
       (this.dateOfBirth || this.yearOfBirth) && this.dateOfDeath && this.phrase;
