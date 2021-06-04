@@ -15,15 +15,17 @@ import { QuestionsAnswersService } from './questions-answers.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { CreateAnswerDto } from './dto/create-answer.dto';
-import { PermissionLevel } from 'src/auth/permission-level.enum';
 import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { Answer } from './entities/answer.entity';
+import { DeathService } from 'src/death/death.service';
+import { Death } from 'src/death/entities/death.entity';
 
 @Controller('qa')
 export class QuestionsAnswersController {
   constructor(
     private readonly questionsAnswersService: QuestionsAnswersService,
+    private readonly deathService: DeathService,
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
@@ -59,24 +61,44 @@ export class QuestionsAnswersController {
   async createAnswer(@Body() createAnswerDto: CreateAnswerDto, @Req() req) {
     const { user } = req;
 
+    const death = await this.deathService.findOne(createAnswerDto.deathId);
     const ability = this.caslAbilityFactory.createForUser(user);
-    const answer = new Answer();
-    answer.userId = createAnswerDto.userId;
+    const answer = new Answer({ death });
 
     if (!ability.can(Action.Create, answer)) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
-    return this.questionsAnswersService.createAnswer(createAnswerDto);
+    return this.questionsAnswersService.createAnswer(
+      death,
+      createAnswerDto.questionId,
+      createAnswerDto.answer,
+    );
   }
 
   @Get('/answer')
-  findAllAnswers(@Req() req, @Query('all') all: boolean) {
+  async findAllAnswers(@Req() req, @Query('deathId') deathId?: number) {
     const { user } = req;
-    if (user.permissionLevel > PermissionLevel.Staff && all) {
+    const ability = this.caslAbilityFactory.createForUser(user);
+
+    if (ability.can(Action.Read, Death) && !deathId) {
       return this.questionsAnswersService.findAllAnswers();
     }
-    return this.questionsAnswersService.findAllAnswersForUser(user.id);
+
+    if (!deathId) {
+      throw new HttpException(
+        'required query parameter deathId',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const death = await this.deathService.findOne(deathId);
+
+    if (!ability.can(Action.Read, death)) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+
+    return this.questionsAnswersService.findAllAnswersForDeath(death);
   }
 
   @Get('/answer/:id')
@@ -100,6 +122,8 @@ export class QuestionsAnswersController {
   ) {
     const { user } = req;
     const answer = await this.questionsAnswersService.findOneAnswer(+id);
+    const death = await this.deathService.findOne(answer.deathId);
+    answer.death = death;
 
     const ability = this.caslAbilityFactory.createForUser(user);
     if (!ability.can(Action.Update, answer)) {

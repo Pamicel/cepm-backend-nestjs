@@ -6,7 +6,7 @@ export class CreateAnswerDto {
 
   @IsInt()
   @IsNotEmpty()
-  userId: number;
+  deathId: number;
 
   @IsInt()
   @IsNotEmpty()

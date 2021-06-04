@@ -1,5 +1,4 @@
 import { Expose } from 'class-transformer';
-import { User } from '../../users/entities/user.entity';
 import {
   BeforeInsert,
   Column,
@@ -10,10 +9,15 @@ import {
 } from 'typeorm';
 import { Question } from './question.entity';
 import { SerializeOptions } from '@nestjs/common';
+import { Death } from 'src/death/entities/death.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
 export class Answer {
+  constructor(partial: Partial<Answer>) {
+    Object.assign(this, partial);
+  }
+
   @Expose()
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,12 +34,16 @@ export class Answer {
   question: Question;
 
   @Expose()
-  @ManyToOne(() => User, (user) => user.answers)
-  user: User;
+  @RelationId((answer: Answer) => answer.question)
+  questionId: number;
 
   @Expose()
-  @RelationId((answer: Answer) => answer.user)
-  userId: number;
+  @ManyToOne(() => Death, (death) => death.answers)
+  death: Death;
+
+  @Expose()
+  @RelationId((answer: Answer) => answer.death)
+  deathId: number;
 
   @BeforeInsert()
   addDateCreated() {

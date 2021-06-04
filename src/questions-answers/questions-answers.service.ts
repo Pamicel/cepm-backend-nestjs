@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
-import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { Question } from './entities/question.entity';
 import { Answer } from './entities/answer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
+import { Death } from 'src/death/entities/death.entity';
 
 @Injectable()
 export class QuestionsAnswersService {
@@ -49,20 +49,18 @@ export class QuestionsAnswersService {
     return `This action removes a #${id} questionsAnswers`;
   }
 
-  async createAnswer(createAnswerDto: CreateAnswerDto) {
-    await this.findOneQuestion(createAnswerDto.questionId);
-    await this.userService.findOne(createAnswerDto.userId);
-    const answer = this.answerRepository.create(createAnswerDto);
-    return this.answerRepository.save(answer);
+  async createAnswer(death: Death, questionId: number, answer: string) {
+    const question = await this.findOneQuestion(questionId);
+    const newAnswer = this.answerRepository.create({ answer, death, question });
+    return this.answerRepository.save(newAnswer);
   }
 
   findAllAnswers() {
     return this.answerRepository.find();
   }
 
-  async findAllAnswersForUser(userId: number) {
-    const user = await this.userService.findOne(userId);
-    return this.answerRepository.find({ where: { user } });
+  async findAllAnswersForDeath(death: Death) {
+    return this.answerRepository.find({ where: { death } });
   }
 
   findOneAnswer(id: number) {

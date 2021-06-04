@@ -7,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
@@ -14,6 +15,7 @@ import {
 import { Crossing } from '../../crossings/entities/crossing.entity';
 import { DeathForm } from '../../death-form/entities/death-form.entity';
 import { DeathGroup } from '../../death-group/entities/death-group.entity';
+import { Answer } from 'src/questions-answers/entities/answer.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -42,6 +44,10 @@ export class Death {
   user: User;
 
   @Expose()
+  @RelationId((death: Death) => death.user)
+  userId: number;
+
+  @Expose()
   @ManyToOne(() => Crossing, (crossing) => crossing.deaths)
   crossing: Crossing;
 
@@ -51,6 +57,10 @@ export class Death {
   @Expose()
   @Column({ nullable: true })
   idc?: number;
+
+  @Expose()
+  @OneToMany(() => Answer, (answer) => answer.death)
+  answers: Answer[];
 
   @Expose()
   @OneToOne(() => DeathForm, (deathForm) => deathForm.death, { eager: true })
