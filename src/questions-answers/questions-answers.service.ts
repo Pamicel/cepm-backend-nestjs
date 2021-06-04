@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { CreateAnswerDto } from './dto/create-answer.dto';
-// import { UpdateAnswerDto } from './dto/update-answer.dto';
+import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { Question } from './entities/question.entity';
 import { Answer } from './entities/answer.entity';
 import { Repository } from 'typeorm';
@@ -60,6 +60,11 @@ export class QuestionsAnswersService {
     return this.answerRepository.find();
   }
 
+  async findAllAnswersForUser(userId: number) {
+    const user = await this.userService.findOne(userId);
+    return this.answerRepository.find({ where: { user } });
+  }
+
   findOneAnswer(id: number) {
     try {
       return this.answerRepository.findOneOrFail(id);
@@ -68,9 +73,12 @@ export class QuestionsAnswersService {
     }
   }
 
-  // updateAnswer(id: number, updateAnswerDto: UpdateAnswerDto) {
-  //   return `This action updates a #${id} questionsAnswers`;
-  // }
+  async updateAnswer(id: number, updateAnswerDto: UpdateAnswerDto) {
+    const answer = await this.findOneAnswer(id);
+    answer.answer = updateAnswerDto.answer;
+
+    return this.answerRepository.save(answer);
+  }
 
   removeAnswer(id: number) {
     return `This action removes a #${id} questionsAnswers`;

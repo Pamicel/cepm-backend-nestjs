@@ -6,6 +6,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { Question } from './question.entity';
 import { SerializeOptions } from '@nestjs/common';
@@ -31,6 +32,10 @@ export class Answer {
   @Expose()
   @ManyToOne(() => User, (user) => user.answers)
   user: User;
+
+  @Expose()
+  @RelationId((answer: Answer) => answer.user)
+  userId: number;
 
   @BeforeInsert()
   addDateCreated() {

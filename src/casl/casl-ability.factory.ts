@@ -6,6 +6,7 @@ import {
   InferSubjects,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
+import { Answer } from '../questions-answers/entities/answer.entity';
 import { PermissionLevel } from '../auth/permission-level.enum';
 import { User } from '../users/entities/user.entity';
 
@@ -17,7 +18,7 @@ export enum Action {
   Delete = 'delete',
 }
 
-type Subjects = InferSubjects<typeof User> | 'all';
+type Subjects = InferSubjects<typeof User | typeof Answer> | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
 
@@ -41,6 +42,8 @@ export class CaslAbilityFactory {
     can(Action.Read, User, { id: user.id });
     can(Action.Update, User, ['email', 'password'], { id: user.id });
     can(Action.Delete, User, { id: user.id });
+
+    can(Action.Manage, Answer, { userId: user.id });
 
     return build({
       // Read https://casl.js.org/v5/en/guide/subject-type-detection#use-classes-as-subject-types for details
