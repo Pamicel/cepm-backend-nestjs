@@ -51,7 +51,9 @@ export class CaslAbilityFactory {
     can(Action.Create, Death, { userId: user.id });
     can(Action.Update, Death, { userId: user.id });
 
-    cannot(Action.Read, Crossing, { archived: true });
+    if (user.permissionLevel < PermissionLevel.Staff) {
+      cannot(Action.Read, Crossing, { archived: true });
+    }
 
     // Answers
     type FlatAnswer = Answer & {
