@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DeathGroup } from '../../death-group/entities/death-group.entity';
+import { crossingIdWords } from 'src/death/id-words';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -46,6 +47,11 @@ export class Crossing {
 
   @OneToMany(() => DeathGroup, (group) => group.crossing)
   groups: DeathGroup[];
+
+  @Expose()
+  get idWord() {
+    return crossingIdWords[(this.id - 1) % crossingIdWords.length];
+  }
 
   @Expose()
   get crossingNumber(): number {
