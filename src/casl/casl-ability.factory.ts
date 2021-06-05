@@ -10,6 +10,7 @@ import { Answer } from '../questions-answers/entities/answer.entity';
 import { PermissionLevel } from '../auth/permission-level.enum';
 import { User } from '../users/entities/user.entity';
 import { Death } from 'src/death/entities/death.entity';
+import { Crossing } from 'src/crossings/entities/crossing.entity';
 
 export enum Action {
   Manage = 'manage',
@@ -20,7 +21,7 @@ export enum Action {
 }
 
 type Subjects =
-  | InferSubjects<typeof User | typeof Death | typeof Answer>
+  | InferSubjects<typeof User | typeof Death | typeof Answer | typeof Crossing>
   | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
@@ -28,9 +29,9 @@ export type AppAbility = Ability<[Action, Subjects]>;
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    const { can, build } = new AbilityBuilder<Ability<[Action, Subjects]>>(
-      Ability as AbilityClass<AppAbility>,
-    );
+    const { can, cannot, build } = new AbilityBuilder<
+      Ability<[Action, Subjects]>
+    >(Ability as AbilityClass<AppAbility>);
 
     if (user.permissionLevel === PermissionLevel.Admin) {
       can(Action.Manage, 'all'); // read-write access to everything
@@ -49,6 +50,8 @@ export class CaslAbilityFactory {
     can(Action.Read, Death, { userId: user.id });
     can(Action.Create, Death, { userId: user.id });
     can(Action.Update, Death, { userId: user.id });
+
+    cannot(Action.Read, Crossing, { archived: true });
 
     // Answers
     type FlatAnswer = Answer & {

@@ -28,6 +28,14 @@ export class CrossingsService {
     return this.crossingRepository.find();
   }
 
+  async findAllOpen(): Promise<Crossing[]> {
+    return this.crossingRepository.find({ where: { archived: false } });
+  }
+
+  async findAllArchived(): Promise<Crossing[]> {
+    return this.crossingRepository.find({ where: { archived: true } });
+  }
+
   async findOne(id: number): Promise<Crossing> {
     try {
       return this.crossingRepository.findOneOrFail(id);
