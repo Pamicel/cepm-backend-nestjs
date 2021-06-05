@@ -37,6 +37,10 @@ export class Crossing {
   @Column({ type: 'date' })
   dateCreated: string;
 
+  @Expose()
+  @Column({ default: false })
+  archived: boolean;
+
   @OneToMany(() => Death, (death) => death.crossing)
   deaths: Death[];
 
