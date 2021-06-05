@@ -16,6 +16,7 @@ import { Crossing } from '../../crossings/entities/crossing.entity';
 import { DeathForm } from '../../death-form/entities/death-form.entity';
 import { DeathGroup } from '../../death-group/entities/death-group.entity';
 import { Answer } from 'src/questions-answers/entities/answer.entity';
+import { deathIdcWords } from '../id-words';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
@@ -69,6 +70,11 @@ export class Death {
 
   @ManyToOne(() => DeathGroup, (group) => group.deaths)
   group: DeathGroup;
+
+  @Expose()
+  get idcWord() {
+    return deathIdcWords[(this.idc - 1) % deathIdcWords.length];
+  }
 
   @BeforeInsert()
   addDateCreated() {
