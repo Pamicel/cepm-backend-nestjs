@@ -108,4 +108,8 @@ export class CreateDeathFormDto {
   @IsOptional()
   @IsString()
   iVoteFor?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  eraseMyData?: boolean;
 }

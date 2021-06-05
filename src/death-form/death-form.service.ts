@@ -51,7 +51,6 @@ export class DeathFormService {
     id: number,
     updateDeathFormDto: UpdateDeathFormDto,
   ): Promise<DeathForm> {
-    console.log({ updateDeathFormDto });
     const df: Partial<DeathForm> = {
       ...(await this.deathFormRepository.findOneOrFail(id)),
       ...updateDeathFormDto,

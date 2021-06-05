@@ -99,6 +99,9 @@ export class DeathForm {
   @Column({ nullable: true })
   iVoteFor?: string;
 
+  @Column({ nullable: true })
+  eraseMyData?: boolean;
+
   @Column({ type: 'date', nullable: true })
   dateCreated?: string;
 
