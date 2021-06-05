@@ -1,7 +1,8 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsLowercase, IsNotEmpty } from 'class-validator';
 
 export class PasswordLoginDto {
   @IsEmail()
+  @IsLowercase()
   email: string;
 
   @IsNotEmpty()
@@ -10,6 +11,7 @@ export class PasswordLoginDto {
 
 export class MagicLoginDto {
   @IsEmail()
+  @IsLowercase()
   email: string;
 
   @IsNotEmpty()
