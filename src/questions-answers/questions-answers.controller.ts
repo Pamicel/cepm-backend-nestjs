@@ -20,6 +20,7 @@ import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { Answer } from './entities/answer.entity';
 import { DeathService } from 'src/death/death.service';
 import { Death } from 'src/death/entities/death.entity';
+import { Question } from './entities/question.entity';
 
 @Controller('qa')
 export class QuestionsAnswersController {
@@ -35,12 +36,12 @@ export class QuestionsAnswersController {
   }
 
   @Get('/question')
-  findAllQuestions() {
+  findAllQuestions(): Promise<Question[]> {
     return this.questionsAnswersService.findAllQuestions();
   }
 
   @Get('/question/:id')
-  findOneQuestion(@Param('id') id: string) {
+  findOneQuestion(@Param('id') id: string): Promise<Question> {
     return this.questionsAnswersService.findOneQuestion(+id);
   }
 

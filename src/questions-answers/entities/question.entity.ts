@@ -12,6 +12,10 @@ import { Answer } from './answer.entity';
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })
 export class Question {
+  constructor(partial: Partial<Question>) {
+    Object.assign(this, partial);
+  }
+
   @Expose()
   @PrimaryGeneratedColumn()
   id: number;
