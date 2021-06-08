@@ -82,7 +82,12 @@ export class QuestionsAnswersService {
     return this.answerRepository.save(answer);
   }
 
-  removeAnswer(id: number) {
-    return `This action removes a #${id} questionsAnswers`;
+  async removeAnswer(id: number) {
+    try {
+      const answer = await this.answerRepository.findOneOrFail(id);
+      return this.answerRepository.remove(answer);
+    } catch (error) {
+      throw new HttpException('Answer not found', HttpStatus.NOT_FOUND);
+    }
   }
 }

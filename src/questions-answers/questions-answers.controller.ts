@@ -144,7 +144,21 @@ export class QuestionsAnswersController {
   }
 
   @Delete('/answer/:id')
-  removeAnswer(@Param('id') id: string) {
+  async removeAnswer(@Req() req, @Param('id') id: string) {
+    const { user } = req;
+    let answer, death;
+    try {
+      answer = await this.questionsAnswersService.findOneAnswer(+id);
+      death = await this.deathService.findOne(answer.deathId);
+    } catch (error) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Permission to update the answer's parent death means permission to delete the answer.
+    const ability = this.caslAbilityFactory.createForUser(user);
+    if (!ability.can(Action.Update, death)) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
     return this.questionsAnswersService.removeAnswer(+id);
   }
 }
