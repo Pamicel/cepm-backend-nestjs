@@ -63,6 +63,10 @@ export class QuestionsAnswersService {
     return this.answerRepository.find({ where: { death } });
   }
 
+  async findAllAnswersForQuestion(question: Question) {
+    return this.answerRepository.find({ where: { question } });
+  }
+
   findOneAnswer(id: number) {
     try {
       return this.answerRepository.findOneOrFail(id);

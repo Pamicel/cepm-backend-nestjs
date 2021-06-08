@@ -21,6 +21,8 @@ import { Answer } from './entities/answer.entity';
 import { DeathService } from 'src/death/death.service';
 import { Death } from 'src/death/entities/death.entity';
 import { Question } from './entities/question.entity';
+import { RequiredPermissionLevel } from 'src/auth/permission-level.decorator';
+import { PermissionLevel } from 'src/auth/permission-level.enum';
 
 @Controller('qa')
 export class QuestionsAnswersController {
@@ -43,6 +45,13 @@ export class QuestionsAnswersController {
   @Get('/question/:id')
   findOneQuestion(@Param('id') id: string): Promise<Question> {
     return this.questionsAnswersService.findOneQuestion(+id);
+  }
+
+  @Get('/question/:id/answer')
+  @RequiredPermissionLevel(PermissionLevel.Staff)
+  async findAllQuestionAnswers(@Param('id') id: string): Promise<Answer[]> {
+    const question = await this.questionsAnswersService.findOneQuestion(+id);
+    return this.questionsAnswersService.findAllAnswersForQuestion(question);
   }
 
   @Patch('/question/:id')
