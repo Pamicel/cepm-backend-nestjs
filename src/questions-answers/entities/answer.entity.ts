@@ -30,7 +30,7 @@ export class Answer {
   dateCreated: string;
 
   @Expose()
-  @ManyToOne(() => Question, (question) => question.answers)
+  @ManyToOne(() => Question, (question) => question.answers, { eager: true })
   question: Question;
 
   @Expose()
