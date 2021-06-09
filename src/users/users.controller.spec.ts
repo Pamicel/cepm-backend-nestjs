@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getConnectionToken, getRepositoryToken } from '@nestjs/typeorm';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
@@ -20,6 +21,10 @@ describe('UsersController', () => {
         },
         {
           provide: getConnectionToken(),
+          useValue: {},
+        },
+        {
+          provide: CaslAbilityFactory,
           useValue: {},
         },
       ],

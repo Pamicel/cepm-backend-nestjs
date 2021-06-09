@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Question } from './question.entity';
 import { SerializeOptions } from '@nestjs/common';
-import { Death } from 'src/death/entities/death.entity';
+import { Death } from '../../death/entities/death.entity';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })

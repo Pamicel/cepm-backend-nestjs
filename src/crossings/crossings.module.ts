@@ -3,7 +3,7 @@ import { CrossingsService } from './crossings.service';
 import { CrossingsController } from './crossings.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Crossing } from './entities/crossing.entity';
-import { CaslModule } from 'src/casl/casl.module';
+import { CaslModule } from '../casl/casl.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Crossing]), CaslModule],

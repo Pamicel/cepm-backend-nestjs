@@ -9,8 +9,8 @@ import { Injectable } from '@nestjs/common';
 import { Answer } from '../questions-answers/entities/answer.entity';
 import { PermissionLevel } from '../auth/permission-level.enum';
 import { User } from '../users/entities/user.entity';
-import { Death } from 'src/death/entities/death.entity';
-import { Crossing } from 'src/crossings/entities/crossing.entity';
+import { Death } from '../death/entities/death.entity';
+import { Crossing } from '../crossings/entities/crossing.entity';
 
 export enum Action {
   Manage = 'manage',

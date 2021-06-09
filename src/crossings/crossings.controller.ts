@@ -11,9 +11,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RequiredPermissionLevel } from 'src/auth/permission-level.decorator';
-import { PermissionLevel } from 'src/auth/permission-level.enum';
-import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
+import { PermissionLevel } from '../auth/permission-level.enum';
+import { Action, CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CrossingsService } from './crossings.service';
 import { CreateCrossingDto } from './dto/create-crossing.dto';
 import { UpdateCrossingDto } from './dto/update-crossing.dto';

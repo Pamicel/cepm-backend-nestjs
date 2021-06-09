@@ -7,6 +7,8 @@ import { UsersService } from '../users/users.service';
 import { DeathController } from './death.controller';
 import { DeathService } from './death.service';
 import { Death } from './entities/death.entity';
+import { DeathFormService } from '../death-form/death-form.service';
+import { DeathForm } from '../death-form/entities/death-form.entity';
 
 describe('DeathController', () => {
   let controller: DeathController;
@@ -16,6 +18,7 @@ describe('DeathController', () => {
       controllers: [DeathController],
       providers: [
         DeathService,
+        DeathFormService,
         UsersService,
         CrossingsService,
         {
@@ -28,6 +31,10 @@ describe('DeathController', () => {
         },
         {
           provide: getRepositoryToken(Crossing),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(DeathForm),
           useValue: {},
         },
       ],

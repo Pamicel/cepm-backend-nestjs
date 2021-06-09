@@ -19,9 +19,12 @@ describe('DeathGroupController', () => {
       providers: [
         DeathGroupService,
         { provide: getRepositoryToken(DeathGroup), useValue: {} },
-        DeathService,
         UsersService,
         CrossingsService,
+        {
+          provide: DeathService,
+          useValue: {},
+        },
         {
           provide: getRepositoryToken(Death),
           useValue: {},

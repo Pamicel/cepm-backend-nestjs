@@ -7,8 +7,8 @@ import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import { CrossingsService } from '../crossings/crossings.service';
 import { Crossing } from '../crossings/entities/crossing.entity';
-import { DeathForm } from 'src/death-form/entities/death-form.entity';
-import { DeathFormService } from 'src/death-form/death-form.service';
+import { DeathForm } from '../death-form/entities/death-form.entity';
+import { DeathFormService } from '../death-form/death-form.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Death, User, Crossing, DeathForm])],

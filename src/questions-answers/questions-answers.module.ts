@@ -4,9 +4,9 @@ import { QuestionsAnswersController } from './questions-answers.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Question } from './entities/question.entity';
 import { Answer } from './entities/answer.entity';
-import { UsersModule } from 'src/users/users.module';
-import { CaslModule } from 'src/casl/casl.module';
-import { DeathModule } from 'src/death/death.module';
+import { UsersModule } from '../users/users.module';
+import { CaslModule } from '../casl/casl.module';
+import { DeathModule } from '../death/death.module';
 
 @Module({
   imports: [

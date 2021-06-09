@@ -4,8 +4,8 @@ import { EmailService } from '../email/email.service';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '../users/entities/user.entity';
-import { CrossingsService } from 'src/crossings/crossings.service';
-import { DeathService } from 'src/death/death.service';
+import { CrossingsService } from '../crossings/crossings.service';
+import { DeathService } from '../death/death.service';
 import { PermissionLevel } from './permission-level.enum';
 
 export class JWTPayload {

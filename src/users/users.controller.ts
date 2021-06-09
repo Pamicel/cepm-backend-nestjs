@@ -22,7 +22,7 @@ import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
 import { PermissionLevel } from '../auth/permission-level.enum';
 import { UpdateUserPermissionDto } from './dto/update-user-permission.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
-import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { Action, CaslAbilityFactory } from '../casl/casl-ability.factory';
 
 @ApiTags('users')
 @Controller('users')

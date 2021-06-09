@@ -1,6 +1,8 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { CrossingsService } from '../crossings/crossings.service';
+import { DeathService } from '../death/death.service';
 import { EmailService } from '../email/email.service';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -19,6 +21,14 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         UsersService,
+        {
+          provide: CrossingsService,
+          useValue: {},
+        },
+        {
+          provide: DeathService,
+          useValue: {},
+        },
         {
           provide: EmailService,
           useValue: {},

@@ -15,7 +15,7 @@ import {
 import { Crossing } from '../../crossings/entities/crossing.entity';
 import { DeathForm } from '../../death-form/entities/death-form.entity';
 import { DeathGroup } from '../../death-group/entities/death-group.entity';
-import { Answer } from 'src/questions-answers/entities/answer.entity';
+import { Answer } from '../../questions-answers/entities/answer.entity';
 import { deathIdcWords } from '../id-words';
 
 @Entity()

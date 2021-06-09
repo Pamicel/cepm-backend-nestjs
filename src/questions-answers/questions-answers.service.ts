@@ -6,8 +6,7 @@ import { Question } from './entities/question.entity';
 import { Answer } from './entities/answer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsersService } from 'src/users/users.service';
-import { Death } from 'src/death/entities/death.entity';
+import { Death } from '../death/entities/death.entity';
 
 @Injectable()
 export class QuestionsAnswersService {
@@ -16,7 +15,6 @@ export class QuestionsAnswersService {
     private questionRepository: Repository<Question>,
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
-    private userService: UsersService,
   ) {}
 
   createQuestion(createQuestionDto: CreateQuestionDto) {

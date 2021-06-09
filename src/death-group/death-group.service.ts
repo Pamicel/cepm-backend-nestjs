@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { DeathGroup } from './entities/death-group.entity';
 import { CrossingsService } from '../crossings/crossings.service';
 import { Death } from '../death/entities/death.entity';
-import { DeathService } from 'src/death/death.service';
+import { DeathService } from '../death/death.service';
 
 @Injectable()
 export class DeathGroupService {

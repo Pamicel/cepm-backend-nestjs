@@ -15,14 +15,14 @@ import { QuestionsAnswersService } from './questions-answers.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { CreateAnswerDto } from './dto/create-answer.dto';
-import { Action, CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { Action, CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 import { Answer } from './entities/answer.entity';
-import { DeathService } from 'src/death/death.service';
-import { Death } from 'src/death/entities/death.entity';
+import { DeathService } from '../death/death.service';
+import { Death } from '../death/entities/death.entity';
 import { Question } from './entities/question.entity';
-import { RequiredPermissionLevel } from 'src/auth/permission-level.decorator';
-import { PermissionLevel } from 'src/auth/permission-level.enum';
+import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
+import { PermissionLevel } from '../auth/permission-level.enum';
 
 @Controller('qa')
 export class QuestionsAnswersController {

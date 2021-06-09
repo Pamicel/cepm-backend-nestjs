@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Death } from 'src/death/entities/death.entity';
+import { Death } from '../death/entities/death.entity';
 import { Repository } from 'typeorm';
 import { CreateDeathFormDto } from './dto/create-death-form.dto';
 import { UpdateDeathFormDto } from './dto/update-death-form.dto';

@@ -1,5 +1,5 @@
 import { IsInt, IsNotEmpty, ValidateIf } from 'class-validator';
-import { CreateDeathDto } from 'src/death/dto/create-death.dto';
+import { CreateDeathDto } from '../../death/dto/create-death.dto';
 
 export class CreateDeathGroupDto {
   @ValidateIf((o) => !o.deathsToCreate || o.deathsToCreate.length === 0)

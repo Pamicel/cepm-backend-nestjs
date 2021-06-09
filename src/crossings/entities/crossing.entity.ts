@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DeathGroup } from '../../death-group/entities/death-group.entity';
-import { crossingIdWords } from 'src/death/id-words';
+import { crossingIdWords } from '../../death/id-words';
 
 @Entity()
 @SerializeOptions({ strategy: 'excludeAll' })

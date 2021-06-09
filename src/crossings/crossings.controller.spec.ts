@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { CrossingsController } from './crossings.controller';
 import { CrossingsService } from './crossings.service';
 import { Crossing } from './entities/crossing.entity';
@@ -13,6 +14,7 @@ describe('CrossingsController', () => {
       providers: [
         CrossingsService,
         { provide: getRepositoryToken(Crossing), useValue: {} },
+        { provide: CaslAbilityFactory, useValue: {} },
       ],
     }).compile();
 

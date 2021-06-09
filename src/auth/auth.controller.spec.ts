@@ -8,6 +8,8 @@ import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { EmailService } from '../email/email.service';
 import { HttpService } from '@nestjs/common';
+import { DeathService } from '../death/death.service';
+import { CrossingsService } from '../crossings/crossings.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -20,6 +22,14 @@ describe('AuthController', () => {
         UsersService,
         {
           provide: EmailService,
+          useValue: {},
+        },
+        {
+          provide: CrossingsService,
+          useValue: {},
+        },
+        {
+          provide: DeathService,
           useValue: {},
         },
         {
