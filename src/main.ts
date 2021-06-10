@@ -13,6 +13,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const PORT = configService.get<string>('PORT');
 
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   const config = new DocumentBuilder()
