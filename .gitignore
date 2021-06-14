@@ -35,6 +35,7 @@ lerna-debug.log*
 
 # Database
 sqlitedb
+sqlitedb.old
 
 # Env
 .env

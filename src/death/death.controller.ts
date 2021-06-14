@@ -48,6 +48,15 @@ export class DeathController {
     return deathIdcWords;
   }
 
+  @Get('simulations')
+  findSimulated() {
+    return this.deathService.findAll({
+      where: { isSimulation: true },
+      order: { id: 'DESC' },
+      relations: ['user'],
+    });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.deathService.findOne(+id);
