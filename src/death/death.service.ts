@@ -11,6 +11,7 @@ import { UpdateDeathFormDto } from '../death-form/dto/update-death-form.dto';
 import { Crossing } from '../crossings/entities/crossing.entity';
 import { User } from '../users/entities/user.entity';
 import { crossingIdWords, deathIdcWords } from './id-words';
+import { ChangeDeathOwnerDto } from './dto/change-death-owner.dto';
 
 @Injectable()
 export class DeathService {
@@ -20,7 +21,7 @@ export class DeathService {
     @InjectRepository(Crossing)
     private crossingRepository: Repository<Crossing>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private usersRepository: Repository<User>,
     private deathFormService: DeathFormService,
   ) {}
 
@@ -34,7 +35,7 @@ export class DeathService {
     let user: Partial<User>;
     try {
       // Create an empty user if no userid given (throws if userid does not exist)
-      user = userId ? await this.userRepository.findOneOrFail(userId) : {};
+      user = userId ? await this.usersRepository.findOneOrFail(userId) : {};
     } catch (error) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -171,6 +172,79 @@ export class DeathService {
       ...updateDeathDto,
     };
     return this.deathRepository.save(newDeath);
+  }
+
+  async changeOwner(
+    id: number,
+    changeDeathOwnerDto: ChangeDeathOwnerDto,
+  ): Promise<Death> {
+    // Find the death
+    let deathToModify;
+    try {
+      deathToModify = await this.deathRepository.findOneOrFail(id, {
+        relations: ['deathForm'],
+      });
+    } catch (error) {
+      throw new HttpException(
+        `Death ${id} does not exist`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Find the user
+    let user;
+    try {
+      user = await this.usersRepository.findOneOrFail(
+        changeDeathOwnerDto.newOwnerId,
+      );
+    } catch (error) {
+      throw new HttpException(
+        `User ${changeDeathOwnerDto.newOwnerId} does not exist`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Check that the user is not already on the same crossing
+    const sameUserOnSameCrossing = await this.deathRepository.findOne({
+      where: { user, crossing: { id: deathToModify.crossingId } },
+    });
+    if (sameUserOnSameCrossing) {
+      throw new HttpException('User already in crossing', HttpStatus.CONFLICT);
+    }
+
+    // If the death to modify doesn't already have a filled deathform
+    if (!deathToModify?.deathForm?.filled) {
+      // Find the user's simulated death
+      const deathSimulation: Death = await this.deathRepository.findOne({
+        where: { isSimulation: true, user },
+        relations: ['deathForm'],
+      });
+
+      // If simulation exists, automatically copy the form from it (if it has one)
+      if (deathSimulation?.deathForm) {
+        const deathFormCopy: DeathForm = await this.deathFormService.copy(
+          deathSimulation.deathForm,
+          deathToModify,
+        );
+
+        // add copied deathform to the new death
+        deathToModify.deathForm = deathFormCopy;
+      }
+    }
+
+    deathToModify.user = user;
+    const updatedDeath = await this.deathRepository.save(deathToModify);
+
+    const oldUserId: number = deathToModify.userId;
+    if (oldUserId) {
+      const oldUser: User = await this.usersRepository.findOne(oldUserId);
+      // Remove the user if it is a virgin user
+      if (!oldUser.email) {
+        await this.usersRepository.remove(oldUser);
+      }
+    }
+
+    return updatedDeath;
   }
 
   async remove(id: number) {

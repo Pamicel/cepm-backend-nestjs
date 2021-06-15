@@ -18,6 +18,8 @@ import { DeathService } from './death.service';
 import { CreateDeathDto } from './dto/create-death.dto';
 import { UpdateDeathDto } from './dto/update-death.dto';
 import { deathIdcWords } from './id-words';
+import { ChangeDeathOwnerDto } from './dto/change-death-owner.dto';
+import { Death } from './entities/death.entity';
 
 @ApiTags('deaths')
 @Controller('death')
@@ -67,6 +69,16 @@ export class DeathController {
     return this.deathService.update(+id, updateDeathDto);
   }
 
+  @RequiredPermissionLevel(PermissionLevel.Staff)
+  @Patch(':id/change-owner')
+  changeOwner(
+    @Param('id') id: string,
+    @Body() changeDeathOwnerDto: ChangeDeathOwnerDto,
+  ): Promise<Death> {
+    return this.deathService.changeOwner(+id, changeDeathOwnerDto);
+  }
+
+  @RequiredPermissionLevel(PermissionLevel.Staff)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.deathService.remove(+id);
