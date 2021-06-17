@@ -103,6 +103,9 @@ export class DeathForm {
   eraseMyData?: boolean;
 
   @Column({ type: 'date', nullable: true })
+  crossingDate: string;
+
+  @Column({ type: 'date', nullable: true })
   dateCreated?: string;
 
   @Column({ type: 'date', nullable: true })

@@ -112,4 +112,8 @@ export class CreateDeathFormDto {
   @IsOptional()
   @IsBoolean()
   eraseMyData?: boolean;
+
+  @IsOptional()
+  @IsString()
+  crossingDate: string;
 }
