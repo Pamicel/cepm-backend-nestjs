@@ -68,6 +68,7 @@ export class DeathFormService {
     const newDeathForm = { ...deathForm };
 
     delete newDeathForm.id;
+    delete newDeathForm.crossingDate; // Delete indicated crossing date bc it cannot be trusted
     newDeathForm.death = death;
 
     const df = await this.deathFormRepository.create(newDeathForm);
