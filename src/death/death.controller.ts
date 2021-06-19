@@ -20,6 +20,7 @@ import { UpdateDeathDto } from './dto/update-death.dto';
 import { deathIdcWords } from './id-words';
 import { ChangeDeathOwnerDto } from './dto/change-death-owner.dto';
 import { Death } from './entities/death.entity';
+import { DeathForm } from 'src/death-form/entities/death-form.entity';
 
 @ApiTags('deaths')
 @Controller('death')
@@ -85,7 +86,10 @@ export class DeathController {
   }
 
   @Post('form')
-  createFirstForm(@Req() req, @Body() createDeathFormDto: CreateDeathFormDto) {
+  createFirstForm(
+    @Req() req,
+    @Body() createDeathFormDto: CreateDeathFormDto,
+  ): Promise<DeathForm> {
     const { user } = req;
     const userId = user.id;
     return this.deathService.createFirstForm(userId, createDeathFormDto);
@@ -95,7 +99,7 @@ export class DeathController {
   createForm(
     @Param('id') id: string,
     @Body() createDeathFormDto: CreateDeathFormDto,
-  ) {
+  ): Promise<DeathForm> {
     return this.deathService.createForm(+id, createDeathFormDto);
   }
 
@@ -103,7 +107,7 @@ export class DeathController {
   updateForm(
     @Param('id') id: string,
     @Body() updateDeathFormDto: UpdateDeathFormDto,
-  ) {
+  ): Promise<DeathForm> {
     return this.deathService.updateForm(+id, updateDeathFormDto);
   }
 }
