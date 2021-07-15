@@ -33,6 +33,7 @@ export class QuestionsAnswersController {
   ) {}
 
   @Post('/question')
+  @RequiredPermissionLevel(PermissionLevel.Director)
   createQuestion(@Body() createQuestionDto: CreateQuestionDto) {
     return this.questionsAnswersService.createQuestion(createQuestionDto);
   }
@@ -55,6 +56,7 @@ export class QuestionsAnswersController {
   }
 
   @Patch('/question/:id')
+  @RequiredPermissionLevel(PermissionLevel.Director)
   updateQuestion(
     @Param('id') id: string,
     @Body() updateQuestionDto: UpdateQuestionDto,
@@ -63,6 +65,7 @@ export class QuestionsAnswersController {
   }
 
   @Delete('/question/:id')
+  @RequiredPermissionLevel(PermissionLevel.Director)
   removeQuestion(@Param('id') id: string) {
     return this.questionsAnswersService.removeQuestion(+id);
   }
