@@ -20,7 +20,7 @@ import { UpdateDeathDto } from './dto/update-death.dto';
 import { deathIdcWords } from './id-words';
 import { ChangeDeathOwnerDto } from './dto/change-death-owner.dto';
 import { Death } from './entities/death.entity';
-import { DeathForm } from 'src/death-form/entities/death-form.entity';
+import { DeathForm } from '../death-form/entities/death-form.entity';
 
 @ApiTags('deaths')
 @Controller('death')

@@ -3,8 +3,8 @@ import { DeathGroupService } from './death-group.service';
 import { CreateDeathGroupDto } from './dto/create-death-group.dto';
 import { AddDeathsToGroupDto } from './dto/add-deaths-to-group.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { RequiredPermissionLevel } from 'src/auth/permission-level.decorator';
-import { PermissionLevel } from 'src/auth/permission-level.enum';
+import { RequiredPermissionLevel } from '../auth/permission-level.decorator';
+import { PermissionLevel } from '../auth/permission-level.enum';
 
 @ApiTags('death-groups')
 @Controller('death-group')
