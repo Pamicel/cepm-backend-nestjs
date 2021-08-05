@@ -57,7 +57,7 @@ export class CrossingsService {
   }
 
   async remove(id: number): Promise<Crossing> {
-    const user = await this.findOne(id);
-    return this.crossingRepository.remove(user);
+    const crossing = await this.findOne(id);
+    return this.crossingRepository.remove(crossing);
   }
 }
